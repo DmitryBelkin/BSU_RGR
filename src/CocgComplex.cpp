@@ -12,7 +12,7 @@ void OutputIterationsAndResidual(const double residual, const int iteration, con
 	fclose(fp);
 }
 
-void COCG(
+void CocgComplex(
 	vector < int    > &ig        ,
 	vector < int    > &jg        ,
 	vector < double > &ggl       ,
@@ -28,7 +28,7 @@ void COCG(
 {
 	//LLT sparce matrix factorization
 	vector < double > LLT_ggl, LLT_di;
-	vector < int > LLT_ig, LLT_jg, LLT_ijg, LLT_idi;
+	vector < int    > LLT_ig, LLT_jg, LLT_ijg, LLT_idi;
 	LLT_Factorization(ig, jg, ijg, idi, ggl, di, LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, nb);
 
 	vector < double > inverse_di;

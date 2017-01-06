@@ -1,6 +1,6 @@
 #include "MVFunctions.h"
 
-void COCG(
+void CocgComplex(
 	vector < int    > &ig        ,
 	vector < int    > &jg        ,
 	vector < double > &ggl       ,

@@ -120,5 +120,5 @@ void main()
 	fopen_s(&fp, pathToResidual1, "w"); fclose(fp);
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
-	COCG(ig, jg, ggl, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
+	CocgComplex(ig, jg, ggl, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 }
