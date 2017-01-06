@@ -1,4 +1,4 @@
-#include "COCG_for_Complex.h"
+#include "CocgComplex.h"
 
 void InputSparseComplexBlockSLAE(
 	char* dirname,
@@ -119,6 +119,13 @@ void main()
 		MaxIter, VectorForCheckMatrixVectorSLAEMultiplication);
 
 	Cresult.resize(FullTaskSize);
+
+	FILE *fp;
+	fopen_s(&fp, "../resources/OUT_data/nev1.txt", "w");
+	fclose(fp);
+	fopen_s(&fp, "../resources/OUT_data/nev2.txt", "w");
+	fclose(fp);
+
 	COCG(Cig, Cjg, Cggl, Cdi, 
 		Cijg, Cidi, Cright_part, 
 		BlockSize, Cresult,eps, MaxIter);

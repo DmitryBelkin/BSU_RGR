@@ -1,23 +1,12 @@
-#include "COCG_for_Complex.h"
+#include "CocgComplex.h"
 #include "LLT.h"
 #include <omp.h>
 
-void OutputItersResidual(
-	double Residual, 
-	int IterNumber,
-	char *filename
-	)
+void OutputIterationsAndResidual(const double residual, const int iteration, const char *filename)
 {
 	FILE *fp;
-	if (IterNumber == 0)
-	{
-		fopen_s(&fp, filename, "w");
-	}
-	else
-	{
-		fopen_s(&fp, filename, "a");
-	}
-	fprintf(fp, "%d\t%.15le\n", IterNumber, Residual);
+	fopen_s(&fp, filename, "a");
+	fprintf(fp, "%d\t%.15le\n", iteration, residual);
 	fclose(fp);
 }
 
@@ -57,7 +46,7 @@ void COCG(
 	temp_spline.resize(2 * nb);
 	int i = 0;
 	int FactorizationType = 2;//1 - di, 2 - LLT
-	for (i = 0; i < 2 * nb; i++)
+	for (i = 0; i < 2 * nb; ++i)
 	{
 		result[i] = 0.0;
 	}
@@ -87,15 +76,15 @@ void COCG(
 	norm(right_part, norm0, nb);
 	nev /= norm0;
 	nevSecond = nev;
-	OutputItersResidual(nev, 0, "../resources/OUT_data/nev1.txt");
-	OutputItersResidual(nevSecond, 0, "../resources/OUT_data/nev2.txt");
+	OutputIterationsAndResidual(nev, 0, "../resources/OUT_data/nev1.txt");
+	OutputIterationsAndResidual(nevSecond, 0, "../resources/OUT_data/nev2.txt");
 	if (FactorizationType == 1)
 	{
 		MultDiOnVect(inverse_di, r, z, nb);
 	}
 	else
 	{
-		SLAE_Forward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
+		SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
 		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, nb);
 	}
 
@@ -151,10 +140,10 @@ void COCG(
 		}
 		else
 		{
-			SLAE_Forward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
+			SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
 			SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, nb);
 		}
-		/*//*/
+
 		conjugate_SK_mult(r, z, complex_number2, nb);//beta
 		div_complex_numbers(complex_number2, complex_number1, beta);
 
@@ -164,9 +153,9 @@ void COCG(
 		norm(r, nev, nb);
 		nev /= norm0;
 		norm(s, nevSecond, nb);
-		nevSecond /= norm0;		
-		OutputItersResidual(nev, iter+1, "../resources/OUT_data/nev1.txt");
-		OutputItersResidual(nevSecond, iter+1, "../resources/OUT_data/nev2.txt");
+		nevSecond /= norm0;
+		OutputIterationsAndResidual(nev, iter+1, "../resources/OUT_data/nev1.txt");
+		OutputIterationsAndResidual(nevSecond, iter+1, "../resources/OUT_data/nev2.txt");
 		printf("nev = %le\r", nev);
 		iter++;
 	}
@@ -178,9 +167,9 @@ void COCG(
 	mult_MV(ig, jg, ggl, di, ijg, idi, result, temp, nb);
 	sub_vec(temp, right_part, temp);
 	norm(temp, nev, nb);
-	nev /= norm0;	
-	OutputItersResidual(nev, iter + 1, "../resources/OUT_data/nev1.txt");
-	OutputItersResidual(nevSecond, iter + 1, "../resources/OUT_data/nev2.txt");
+	nev /= norm0;
+	OutputIterationsAndResidual(nev      , iter + 1, "../resources/OUT_data/nev1.txt");
+	OutputIterationsAndResidual(nevSecond, iter + 1, "../resources/OUT_data/nev2.txt");
 	printf("\nEnd nev = %le\n", nev);
 	printf("\nIters\t=\t%d\n", iter);
 	t_end = omp_get_wtime();
