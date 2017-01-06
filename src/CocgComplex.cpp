@@ -4,6 +4,8 @@
 
 const char * timeMeasurements = "../resources/timeMeasurements.txt";
 
+#define DIAGONAL_FACTORIZATION 0; //1 - di, 2 - LLT
+
 void OutputIterationsAndResidual(const double residual, const int iteration, const char *filename)
 {
 	FILE *fp;
@@ -31,13 +33,13 @@ void CocgComplex(
 	vector < int    > LLT_ig, LLT_jg, LLT_ijg, LLT_idi;
 	LLT_Factorization(ig, jg, ijg, idi, ggl, di, LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, nb);
 
-	vector < double > inverse_di;
-	inverse_di.resize(2 * nb);
+	vector < double > inverseDi;
+	inverseDi.resize(2 * nb);
 	vector < double > temp;
 	vector < double > p, z, r;
 	vector < double > Ap;
 	double alfa[2], beta[2];
-	double complex_number1[2], complex_number2[2];
+	double complexNumber1[2], complexNumber2[2];
 	vector < double > y, s, temp_spline;
 	double etta;
 	p   .resize(2 * nb);
@@ -47,7 +49,6 @@ void CocgComplex(
 	temp.resize(2 * nb);
 	temp_spline.resize(2 * nb);
 	int i = 0;
-	int FactorizationType = 2;//1 - di, 2 - LLT
 	for (i = 0; i < 2 * nb; ++i)
 	{
 		result[i] = 0.0;
@@ -57,12 +58,12 @@ void CocgComplex(
 		int size = idi[i + 1] - idi[i];
 		if (size == 2)
 		{
-			DiagonalPreconditioning(&di[idi[i]], &inverse_di[2 * i]);
+			DiagonalPreconditioning(&di[idi[i]], &inverseDi[2 * i]);
 		}
 		else
 		{
-			inverse_di[2 * i] = 1.0 / di[idi[i]];
-			inverse_di[2 * i + 1] = 0;
+			inverseDi[2 * i] = 1.0 / di[idi[i]];
+			inverseDi[2 * i + 1] = 0;
 		}
 	}
 
@@ -80,15 +81,13 @@ void CocgComplex(
 	nevSecond = nev;
 	OutputIterationsAndResidual(nev, 0, "../resources/OUT_data/nev1.txt");
 	OutputIterationsAndResidual(nevSecond, 0, "../resources/OUT_data/nev2.txt");
-	if (FactorizationType == 1)
-	{
-		MultDiOnVect(inverse_di, r, z, nb);
-	}
-	else
-	{
-		SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
-		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, nb);
-	}
+
+#if DIAGONAL_FACTORIZATION
+	MultDiOnVect(inverseDi, r, z, nb);
+#else
+	SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
+	SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, nb);
+#endif
 
 /*	p = z;
 	s = r;
@@ -100,10 +99,10 @@ void CocgComplex(
 	double timeStart = omp_get_wtime();
 	while (nevSecond > eps && iter < maxiter)
 	{
-		ComplexScalarConjugateProduct(r, z, complex_number1, nb);
+		ComplexScalarConjugateProduct(r, z, complexNumber1, nb);
 		MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, p, Ap, nb);
-		ComplexScalarConjugateProduct(Ap, p, complex_number2, nb);
-		DivideComplexNumbers(complex_number1, complex_number2, alfa);
+		ComplexScalarConjugateProduct(Ap, p, complexNumber2, nb);
+		DivideComplexNumbers(complexNumber1, complexNumber2, alfa);
 
 		ComplexMultiplyVectorScalar(p, alfa, temp, nb);
 		SummVectors(result, temp, result);//xj+1
@@ -133,19 +132,15 @@ void CocgComplex(
 			SummVectors(s, temp_spline, s);
 		}
 
-		
-		if (FactorizationType == 1)
-		{
-			MultDiOnVect(inverse_di, r, z, nb);//zj+1*/
-		}
-		else
-		{
-			SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
-			SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, nb);
-		}
+#if DIAGONAL_FACTORIZATION
+		MultDiOnVect(inverseDi, r, z, nb);//zj+1*/
+#else
+		SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, nb);
+		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, nb);
+#endif
 
-		ComplexScalarConjugateProduct(r, z, complex_number2, nb);//beta
-		DivideComplexNumbers(complex_number2, complex_number1, beta);
+		ComplexScalarConjugateProduct(r, z, complexNumber2, nb);//beta
+		DivideComplexNumbers(complexNumber2, complexNumber1, beta);
 
 		ComplexMultiplyVectorScalar(p, beta, temp, nb);
 		SummVectors(z, temp, p);

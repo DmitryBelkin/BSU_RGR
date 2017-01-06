@@ -114,11 +114,10 @@ void main()
 
 	InputSlae(di, ggl, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter, check);
 
-	result.resize(slaeDimension);
-
 	FILE *fp;
 	fopen_s(&fp, pathToResidual1, "w"); fclose(fp);
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
+	result.resize(slaeDimension);
 	CocgComplex(ig, jg, ggl, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 }
