@@ -6,7 +6,7 @@
 #define DIAGONAL_FACTORIZATION 0
 #define LLT_FACTORIZATION !DIAGONAL_FACTORIZATION
 
-const char * timeMeasurements = "../resources/timeMeasurements.txt";
+const char * timeMeasurements = "../resources/output/timeMeasurements.txt";
 
 void OutputIterationsAndResidual(const double residual, const int iteration, const char *filename)
 {
@@ -78,8 +78,8 @@ void CocgComplex(
 	double norm0 = Norm(rightPart, blockSize);
 	residual /= norm0;
 	double residualSecond = residual;
-	OutputIterationsAndResidual(residual      , 0, "../resources/OUT_data/residual1.txt");
-	OutputIterationsAndResidual(residualSecond, 0, "../resources/OUT_data/residual2.txt");
+	OutputIterationsAndResidual(residual      , 0, "../resources/output/residual1.txt");
+	OutputIterationsAndResidual(residualSecond, 0, "../resources/output/residual2.txt");
 
 #if DIAGONAL_FACTORIZATION
 	MultDiOnVect(inverseDi, r, z, blockSize);
@@ -149,8 +149,8 @@ void CocgComplex(
 		residual       /= norm0;
 		residualSecond  = Norm(s, blockSize);
 		residualSecond /= norm0;
-		OutputIterationsAndResidual(residual      , iteration + 1, "../resources/OUT_data/residual1.txt");
-		OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/OUT_data/residual2.txt");
+		OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");
+		OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/output/residual2.txt");
 		printf("residual = %le\r", residual);
 		iteration++;
 	}
@@ -163,10 +163,10 @@ void CocgComplex(
 	SubtractVectors(temp, rightPart, temp);
 	residual = Norm(temp, blockSize);
 	residual /= norm0;
-	OutputIterationsAndResidual(residual      , iteration + 1, "../resources/OUT_data/residual1.txt");
-	OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/OUT_data/residual2.txt");
-	printf("end residual\t=\t%le\n", residual );
-	printf("iterations\t=\t%d\n" , iteration);
+	OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");
+	OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/output/residual2.txt");
+	printf("end residual\t=\t%le\n", residual);
+	printf("iterations\t=\t%d\n", iteration);
 	const double timeEnd = omp_get_wtime();
 
 	printf("time spent\t=\t%.6lf sec\n", timeEnd - timeStart);

@@ -1,8 +1,8 @@
 #include "CocgComplex.h"
 
-const char * pathToResidual1 = "../resources/OUT_data/nev1.txt";
-const char * pathToResidual2 = "../resources/OUT_data/nev2.txt";
-const char * pathToSlaeDir   = "../resources/IN_data";
+const char * pathToResidual1 = "../resources/output/nev1.txt";
+const char * pathToResidual2 = "../resources/output/nev2.txt";
+const char * pathToSlaeDir   = "../resources/input";
 
 void InputSlae(
 	  vector < double > &di
