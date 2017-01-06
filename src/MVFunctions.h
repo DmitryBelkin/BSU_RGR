@@ -2,7 +2,7 @@
 using namespace std;
 
 double RealScalarProduct            (vector < double > &vec1, vector < double > &vec2);
-void   ComplexScalarConjugateProduct(vector < double > &x, vector < double > &y,double  *result,int nb);
+void   ComplexScalarConjugateProduct(vector < double > &x, vector < double > &y, double  *result, int nb);
 void   RealMultiplyVectorScalar     (vector < double > &vec, double  scalar, vector < double > &result);
 void   ComplexMultiplyVectorScalar  (vector < double > &vec, double *scalar, vector < double > &result, int nb);
 void   MultiplyBlock                (double *x, double *y, double *a, int size);

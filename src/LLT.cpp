@@ -19,14 +19,14 @@ void ResizeL(
 	LLT_ijg.resize(LLT_ig.back() + 1);
 	LLT_ijg[0] = 0;
 	//все блоки в разложении имеют размер 2
-	for (int i = 1, size = LLT_ijg.size(); i < size; i++)
+	for (int i = 1, size = LLT_ijg.size(); i < size; ++i)
 	{
 		LLT_ijg[i] = LLT_ijg[i - 1] + 2;
 	}
 	LLT_ggl.resize(LLT_ijg[LLT_ig.back()]);
 	LLT_idi.resize(Nb + 1);
 	LLT_idi[0] = 0;
-	for (int i = 1, size = LLT_idi.size(); i < size; i++)
+	for (int i = 1, size = LLT_idi.size(); i < size; ++i)
 	{
 		LLT_idi[i] = LLT_idi[i - 1] + 2;
 	}
@@ -64,7 +64,7 @@ void LLT_Factorization(
 		int ib1 = ig[i + 1];
 		//идем по блокам для разложения
 		//ggl
-		for (int m = ib0;m < ib1; m++)
+		for (int m = ib0; m < ib1; ++m)
 		{
 			int j = jg[m];
 			int jb0 = ig[j];
@@ -73,7 +73,7 @@ void LLT_Factorization(
 			sum[1] = 0;
 			int i_cur = ib0;
 			//суммируем умножения блоков в строке-столбце
-			for (int k = jb0; k < jb1; k++)
+			for (int k = jb0; k < jb1; ++k)
 			{
 				while (jg[i_cur] < jg[k])
 				{
@@ -105,7 +105,7 @@ void LLT_Factorization(
 		//di
 		sum[0] = 0;
 		sum[1] = 0;
-		for (int k = ib0; k < ib1; k++)
+		for (int k = ib0; k < ib1; ++k)
 		{
 			size = LLT_ijg[k + 1] - LLT_ijg[k];
 			MultiplyBlock(&LLT_ggl[LLT_ijg[k]], sum, &LLT_ggl[LLT_ijg[k]], size);
@@ -122,7 +122,7 @@ void LLT_Factorization(
 			sum[1] = di[idi[i]+1] - sum[1];
 		}
 		SqrtComplex(sum, tmp);
-		LLT_di[2 * i] = tmp[0];
+		LLT_di[2 * i    ] = tmp[0];
 		LLT_di[2 * i + 1] = tmp[1];
 	}
 }
@@ -141,11 +141,11 @@ void SLAE_Forward_Complex(
 {
 	result = right_part;
 	double tmp[2];
-	for (int i = 0; i < Nb; i++)
+	for (int i = 0; i < Nb; ++i)
 	{
 		int ib0 = LLT_ig[i];
 		int ib1 = LLT_ig[i + 1];
-		for (int m = ib0; m < ib1; m++)
+		for (int m = ib0; m < ib1; ++m)
 		{
 			int j = LLT_jg[m];
 			MultiplyComplexNumbers(&LLT_ggl[LLT_ijg[m]], &result[2 * j], tmp);

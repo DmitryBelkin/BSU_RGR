@@ -8,7 +8,7 @@ void InputSparseComplexBlockSLAE(
 	vector < int    > &jg,
 	vector < int    > &idi,
 	vector < int    > &ijg,
-	vector < double > &righr_part,
+	vector < double > &right_part,
 	int               &FullTaskSize,
 	int               &BlockSize,
 	double            &eps,
@@ -88,11 +88,11 @@ void InputSparseComplexBlockSLAE(
 	fclose(fp);
 	//right part
 	sprintf_s(filename, "%s/pr", dirname);
-	righr_part.resize(FullTaskSize);
+	right_part.resize(FullTaskSize);
 	fopen_s(&fp, filename, "rb");
-	for (int i = 0, size = righr_part.size(); i < size; ++i)
+	for (int i = 0, size = right_part.size(); i < size; ++i)
 	{
-		fread(&righr_part[i], sizeof(double), 1, fp);
+		fread(&right_part[i], sizeof(double), 1, fp);
 	}
 	fclose(fp);
 	//VectorForCheckMatrixVectorSLAEMultiplication
