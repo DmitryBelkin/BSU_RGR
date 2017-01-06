@@ -7,9 +7,9 @@ void COCG(
 	vector < double > &di        ,
 	vector < int    > &ijg       ,
 	vector < int    > &idi       ,
-	vector < double > &right_part,
+	vector < double > &rightPart,
 	int                nb        ,
 	vector < double > &result    ,
 	double             eps       ,
-	int                MaxIter
+	int                maxiter
 	);

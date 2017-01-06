@@ -24,7 +24,7 @@ void SLAE_Forward_Complex(
 	vector < int    > &LLT_idi,
 	vector < double > &LLT_ggl,
 	vector < double > &LLT_di,
-	vector < double > &right_part,
+	vector < double > &rightPart,
 	vector < double > &result,
 	int Nb
 	);
@@ -36,7 +36,7 @@ void SLAE_Backward_Complex(
 	vector < int    > &LLT_idi,
 	vector < double > &LLT_ggl,
 	vector < double > &LLT_di,
-	vector < double > &right_part,
+	vector < double > &rightPart,
 	vector < double > &result,
 	int Nb
 	);

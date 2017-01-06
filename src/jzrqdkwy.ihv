@@ -11,11 +11,11 @@ void InputSlae(
 	vector < int    > &jg,
 	vector < int    > &idi,
 	vector < int    > &ijg,
-	vector < double > &rightPart,
-	int               &slaeDimension,
-	int               &blockSize,
+	vector < double > &right_part,
+	int               &FullTaskSize,
+	int               &BlockSize,
 	double            &eps,
-	int               &maxiter,
+	int               &MaxIter,
 	vector < double > &VectorForCheckMatrixVectorSLAEMultiplication
 	)
 {
@@ -23,15 +23,15 @@ void InputSlae(
 	sprintf_s(filename, "%s/kuslau", pathToSlaeDir);
 	FILE *fp;
 	fopen_s(&fp, filename, "r");
-	fscanf_s(fp, "%d%le%d", &slaeDimension, &eps, &maxiter);
+	fscanf_s(fp, "%d%le%d", &FullTaskSize, &eps, &MaxIter);
 	fclose(fp);
 
-	blockSize = slaeDimension / 2;
+	BlockSize = FullTaskSize / 2;
 
-	ig.resize(blockSize + 1);
+	ig.resize(BlockSize + 1);
 	sprintf_s(filename, "%s/ig", pathToSlaeDir);
 	fopen_s(&fp, filename, "rb");
-	for (int i = 0; i < blockSize + 1; ++i)
+	for (int i = 0; i < BlockSize + 1; ++i)
 	{
 		fread(&ig[i], sizeof(int), 1, fp);
 		ig[i]--;
@@ -39,9 +39,9 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/idi", pathToSlaeDir);
-	idi.resize(blockSize + 1);
+	idi.resize(BlockSize + 1);
 	fopen_s(&fp, filename, "rb");
-	for (int i = 0; i < blockSize + 1; ++i)
+	for (int i = 0; i < BlockSize + 1; ++i)
 	{
 		fread(&idi[i], sizeof(int), 1, fp);
 		idi[i]--;
@@ -49,7 +49,7 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/jg", pathToSlaeDir);
-	jg.resize(ig[blockSize]);
+	jg.resize(ig[BlockSize]);
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0, size = jg.size(); i < size; ++i)
 	{
@@ -59,7 +59,7 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/ijg", pathToSlaeDir);
-	ijg.resize(ig[blockSize]+1);
+	ijg.resize(ig[BlockSize]+1);
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0, size = ijg.size(); i < size; ++i)
 	{
@@ -69,7 +69,7 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/gg", pathToSlaeDir);
-	ggl.resize(ijg[ig[blockSize]]);
+	ggl.resize(ijg[ig[BlockSize]]);
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0, size = ggl.size(); i < size; ++i)
 	{
@@ -78,7 +78,7 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/di", pathToSlaeDir);
-	di.resize(idi[blockSize]);
+	di.resize(idi[BlockSize]);
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0, size = di.size(); i < size; ++i)
 	{
@@ -87,16 +87,16 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/pr", pathToSlaeDir);
-	rightPart.resize(slaeDimension);
+	right_part.resize(FullTaskSize);
 	fopen_s(&fp, filename, "rb");
-	for (int i = 0, size = rightPart.size(); i < size; ++i)
+	for (int i = 0, size = right_part.size(); i < size; ++i)
 	{
-		fread(&rightPart[i], sizeof(double), 1, fp);
+		fread(&right_part[i], sizeof(double), 1, fp);
 	}
 	fclose(fp);
 	//VectorForCheckMatrixVectorSLAEMultiplication
 	sprintf_s(filename, "%s/y.txt", pathToSlaeDir);
-	VectorForCheckMatrixVectorSLAEMultiplication.resize(slaeDimension);
+	VectorForCheckMatrixVectorSLAEMultiplication.resize(FullTaskSize);
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0, size = VectorForCheckMatrixVectorSLAEMultiplication.size(); i < size; ++i)
 	{
@@ -110,17 +110,17 @@ void main()
 	vector < double > Cdi, Cggl, Cright_part, Cresult;
 	vector < int    > Cidi, Cig, Cijg, Cjg;
 	vector < double > VectorForCheckMatrixVectorSLAEMultiplication;
-	int    maxiter, slaeDimension, blockSize;
+	int    MaxIter, FullTaskSize, BlockSize;
 	double eps;
 
-	InputSlae(Cdi, Cggl, Cig, Cjg, Cidi, Cijg, Cright_part, slaeDimension, blockSize, eps,
-		maxiter, VectorForCheckMatrixVectorSLAEMultiplication);
+	InputSlae(Cdi, Cggl, Cig, Cjg, Cidi, Cijg, Cright_part, FullTaskSize, BlockSize, eps,
+		MaxIter, VectorForCheckMatrixVectorSLAEMultiplication);
 
-	Cresult.resize(slaeDimension);
+	Cresult.resize(FullTaskSize);
 
 	FILE *fp;
 	fopen_s(&fp, pathToResidual1, "w"); fclose(fp);
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
-	COCG(Cig, Cjg, Cggl, Cdi, Cijg, Cidi, Cright_part, blockSize, Cresult,eps, maxiter);
+	COCG(Cig, Cjg, Cggl, Cdi, Cijg, Cidi, Cright_part, BlockSize, Cresult,eps, MaxIter);
 }

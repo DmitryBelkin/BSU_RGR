@@ -134,12 +134,12 @@ void SLAE_Forward_Complex(
 	vector < int    > &LLT_idi,
 	vector < double > &LLT_ggl,
 	vector < double > &LLT_di,
-	vector < double > &right_part,
+	vector < double > &rightPart,
 	vector < double > &result,
 	int Nb
 	)
 {
-	result = right_part;
+	result = rightPart;
 	double tmp[2];
 	for (int i = 0; i < Nb; ++i)
 	{
@@ -162,12 +162,12 @@ void SLAE_Backward_Complex(
 	vector < int    > &LLT_idi,
 	vector < double > &LLT_ggl,
 	vector < double > &LLT_di,
-	vector < double > &right_part,
+	vector < double > &rightPart,
 	vector < double > &result,
 	int Nb
 	)
 {
-	result = right_part;
+	result = rightPart;
 	double tmp[2];
 	for (int j = Nb - 1; j >= 0; j--)
 	{

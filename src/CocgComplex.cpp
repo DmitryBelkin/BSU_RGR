@@ -2,6 +2,8 @@
 #include "LLT.h"
 #include <omp.h>
 
+const char * timeMeasurements = "../resources/timeMeasurements.txt";
+
 void OutputIterationsAndResidual(const double residual, const int iteration, const char *filename)
 {
 	FILE *fp;
@@ -17,11 +19,11 @@ void COCG(
 	vector < double > &di        ,
 	vector < int    > &ijg       ,
 	vector < int    > &idi       ,
-	vector < double > &right_part,
+	vector < double > &rightPart,
 	int                nb        ,
 	vector < double > &result    ,
 	double             eps       ,
-	int                MaxIter
+	int                maxiter
 	)
 {
 	//LLT sparce matrix factorization
@@ -69,11 +71,11 @@ void COCG(
 	MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, result, temp, nb);
 	s.resize(2 * nb);
 	y.resize(2 * nb);
-	SubtractVectors(right_part, temp, r);
+	SubtractVectors(rightPart, temp, r);
 	nev = Norm(r, nb);
 	int flag = 0;
 	double norm0;
-	norm0 = Norm(right_part, nb);
+	norm0 = Norm(rightPart, nb);
 	nev /= norm0;
 	nevSecond = nev;
 	OutputIterationsAndResidual(nev, 0, "../resources/OUT_data/nev1.txt");
@@ -95,10 +97,8 @@ void COCG(
 	CopyVector(&r[0], &s[0], nb);
 	CopyVector(&result[0], &y[0], nb);
 	int iter = 0;
-	double t_start;
-	double t_end;
-	t_start = omp_get_wtime();
-	while (nevSecond > eps && iter < MaxIter)
+	double timeStart = omp_get_wtime();
+	while (nevSecond > eps && iter < maxiter)
 	{
 		ComplexScalarConjugateProduct(r, z, complex_number1, nb);
 		MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, p, Ap, nb);
@@ -165,16 +165,16 @@ void COCG(
 		CopyVector(&result[0], &y[0], nb);
 	}
 	MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, result, temp, nb);
-	SubtractVectors(temp, right_part, temp);
+	SubtractVectors(temp, rightPart, temp);
 	nev = Norm(temp, nb);
 	nev /= norm0;
 	OutputIterationsAndResidual(nev      , iter + 1, "../resources/OUT_data/nev1.txt");
 	OutputIterationsAndResidual(nevSecond, iter + 1, "../resources/OUT_data/nev2.txt");
 	printf("\nEnd nev = %le\n", nev);
 	printf("\nIters\t=\t%d\n", iter);
-	t_end = omp_get_wtime();
+	double timeEnd = omp_get_wtime();
 	FILE *fp;
-	fopen_s(&fp, "Times.txt", "a");
-	fprintf(fp, "%.15le\n", t_end - t_start);
+	fopen_s(&fp, timeMeasurements, "a");
+	fprintf(fp, "%.15le\n", timeEnd - timeStart);
 	fclose(fp);
 }
