@@ -14,7 +14,7 @@ void LLT_Factorization(
 	, vector < int    > &LLT_idi
 	, vector < double > &LLT_ggl
 	, vector < double > &LLT_di
-	, int Nb
+	, int blockSize
 	);
 
 void SLAE_Forward_Complex(
@@ -26,7 +26,7 @@ void SLAE_Forward_Complex(
 	, vector < double > &LLT_di
 	, vector < double > &rightPart
 	, vector < double > &result
-	, int Nb
+	, int blockSize
 	);
 
 void SLAE_Backward_Complex(
@@ -38,7 +38,7 @@ void SLAE_Backward_Complex(
 	, vector < double > &LLT_di
 	, vector < double > &rightPart
 	, vector < double > &result
-	, int Nb
+	, int blockSize
 	);
 
 void SqrtComplex(double *ab, double*xy);

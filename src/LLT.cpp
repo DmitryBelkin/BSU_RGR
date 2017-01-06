@@ -10,7 +10,7 @@ void ResizeL(
 	vector < double > &LLT_di       ,
 	vector < int    > &fullMatrix_jg,
 	vector < int    > &fullMatrix_ig,
-	int Nb
+	int blockSize
 	)
 {
 	LLT_ig = fullMatrix_ig;
@@ -24,7 +24,7 @@ void ResizeL(
 		LLT_ijg[i] = LLT_ijg[i - 1] + 2;
 	}
 	LLT_ggl.resize(LLT_ijg[LLT_ig.back()]);
-	LLT_idi.resize(Nb + 1);
+	LLT_idi.resize(blockSize + 1);
 	LLT_idi[0] = 0;
 	for (int i = 1, size = LLT_idi.size(); i < size; ++i)
 	{
@@ -52,13 +52,13 @@ void LLT_Factorization(
 	, vector < int    > &LLT_idi
 	, vector < double > &LLT_ggl
 	, vector < double > &LLT_di
-	, int Nb
+	, int blockSize
 	)
 {
-	ResizeL(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, jg, ig, Nb);
+	ResizeL(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, jg, ig, blockSize);
 	double sum[2];
 	int size;
-	for (int i = 0; i < Nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		int ib0 = ig[i];
 		int ib1 = ig[i + 1];
@@ -136,12 +136,12 @@ void SLAE_Forward_Complex(
 	, vector < double > &LLT_di
 	, vector < double > &rightPart
 	, vector < double > &result
-	, int Nb
+	, int blockSize
 	)
 {
 	result = rightPart;
 	double tmp[2];
-	for (int i = 0; i < Nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		int ib0 = LLT_ig[i];
 		int ib1 = LLT_ig[i + 1];
@@ -164,12 +164,12 @@ void SLAE_Backward_Complex(
 	, vector < double > &LLT_di
 	, vector < double > &rightPart
 	, vector < double > &result
-	, int Nb
+	, int blockSize
 	)
 {
 	result = rightPart;
 	double tmp[2];
-	for (int j = Nb - 1; j >= 0; j--)
+	for (int j = blockSize - 1; j >= 0; j--)
 	{
 		DivideComplexNumbers(&result[2 * j], &LLT_di[LLT_idi[j]], &result[2 * j]);
 		int jb0 = LLT_ig[j];
