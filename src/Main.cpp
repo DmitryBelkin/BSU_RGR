@@ -5,18 +5,18 @@ const char * pathToResidual2 = "../resources/OUT_data/nev2.txt";
 const char * pathToSlaeDir   = "../resources/IN_data";
 
 void InputSlae(
-	vector < double > &di,
-	vector < double > &ggl,
-	vector < int    > &ig,
-	vector < int    > &jg,
-	vector < int    > &idi,
-	vector < int    > &ijg,
-	vector < double > &rightPart,
-	int               &slaeDimension,
-	int               &blockSize,
-	double            &epsilon,
-	int               &maxiter,
-	vector < double > &check
+	  vector < double > &di
+	, vector < double > &ggl
+	, vector < int    > &ig
+	, vector < int    > &jg
+	, vector < int    > &idi
+	, vector < int    > &ijg
+	, vector < double > &rightPart
+	, int               &slaeDimension
+	, int               &blockSize
+	, double            &epsilon
+	, int               &maxiter
+	, vector < double > &check
 	)
 {
 	char filename[100];

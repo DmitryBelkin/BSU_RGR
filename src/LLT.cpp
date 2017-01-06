@@ -40,25 +40,25 @@ void SqrtComplex(double *ab, double*xy)
 }
 
 void LLT_Factorization(
-	vector < int    > &ig,
-	vector < int    > &jg,
-	vector < int    > &ijg,
-	vector < int    > &idi,
-	vector < double > &ggl,
-	vector < double > &di,
-	vector < int    > &LLT_ig,
-	vector < int    > &LLT_jg,
-	vector < int    > &LLT_ijg,
-	vector < int    > &LLT_idi,
-	vector < double > &LLT_ggl,
-	vector < double > &LLT_di,
-	int Nb
+	  vector < int    > &ig
+	, vector < int    > &jg
+	, vector < int    > &ijg
+	, vector < int    > &idi
+	, vector < double > &ggl
+	, vector < double > &di
+	, vector < int    > &LLT_ig
+	, vector < int    > &LLT_jg
+	, vector < int    > &LLT_ijg
+	, vector < int    > &LLT_idi
+	, vector < double > &LLT_ggl
+	, vector < double > &LLT_di
+	, int Nb
 	)
 {
 	ResizeL(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, jg, ig, Nb);
 	double sum[2];
 	int size;
-	for (int i = 0; i < Nb; i++)
+	for (int i = 0; i < Nb; ++i)
 	{
 		int ib0 = ig[i];
 		int ib1 = ig[i + 1];
@@ -94,12 +94,12 @@ void LLT_Factorization(
 			}
 			else
 			{
-				sum[0] = ggl[ijg[m]] - sum[0];
+				sum[0] = ggl[ijg[m]  ] - sum[0];
 				sum[1] = ggl[ijg[m]+1] - sum[1];
 			}
 
 			DivideComplexNumbers(sum, &LLT_di[LLT_idi[j]], sum);
-			LLT_ggl[LLT_ijg[m]] = sum[0];
+			LLT_ggl[LLT_ijg[m]  ] = sum[0];
 			LLT_ggl[LLT_ijg[m]+1] = sum[1];
 		}
 		//di
@@ -118,7 +118,7 @@ void LLT_Factorization(
 		}
 		else
 		{
-			sum[0] = di[idi[i]] - sum[0];
+			sum[0] = di[idi[i]  ] - sum[0];
 			sum[1] = di[idi[i]+1] - sum[1];
 		}
 		SqrtComplex(sum, tmp);
@@ -128,15 +128,15 @@ void LLT_Factorization(
 }
 
 void SLAE_Forward_Complex(
-	vector < int    > &LLT_ig,
-	vector < int    > &LLT_jg,
-	vector < int    > &LLT_ijg,
-	vector < int    > &LLT_idi,
-	vector < double > &LLT_ggl,
-	vector < double > &LLT_di,
-	vector < double > &rightPart,
-	vector < double > &result,
-	int Nb
+	  vector < int    > &LLT_ig
+	, vector < int    > &LLT_jg
+	, vector < int    > &LLT_ijg
+	, vector < int    > &LLT_idi
+	, vector < double > &LLT_ggl
+	, vector < double > &LLT_di
+	, vector < double > &rightPart
+	, vector < double > &result
+	, int Nb
 	)
 {
 	result = rightPart;
@@ -156,15 +156,15 @@ void SLAE_Forward_Complex(
 }
 
 void SLAE_Backward_Complex(
-	vector < int    > &LLT_ig,
-	vector < int    > &LLT_jg,
-	vector < int    > &LLT_ijg,
-	vector < int    > &LLT_idi,
-	vector < double > &LLT_ggl,
-	vector < double > &LLT_di,
-	vector < double > &rightPart,
-	vector < double > &result,
-	int Nb
+	  vector < int    > &LLT_ig
+	, vector < int    > &LLT_jg
+	, vector < int    > &LLT_ijg
+	, vector < int    > &LLT_idi
+	, vector < double > &LLT_ggl
+	, vector < double > &LLT_di
+	, vector < double > &rightPart
+	, vector < double > &result
+	, int Nb
 	)
 {
 	result = rightPart;
