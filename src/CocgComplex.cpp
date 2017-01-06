@@ -44,7 +44,6 @@ void CocgComplex(
 	double alfa[2], beta[2];
 	double complexNumber1[2], complexNumber2[2];
 	vector < double > y, s, temp_spline;
-	double etta;
 	p   .resize(2 * blockSize);
 	z   .resize(2 * blockSize);
 	r   .resize(2 * blockSize);
@@ -94,8 +93,9 @@ void CocgComplex(
 	CopyVector(&z[0], &p[0], blockSize);
 	CopyVector(&r[0], &s[0], blockSize);
 	CopyVector(&result[0], &y[0], blockSize);
-	int flag = 0;
-	int iteration = 0;
+	double etta;
+	int    flag = 0;
+	int    iteration = 0;
 	const double timeStart = omp_get_wtime();
 	while (residualSecond > epsilon && iteration < maxiter)
 	{

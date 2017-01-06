@@ -19,8 +19,8 @@ void   DiagonalPreconditioning(double * x, double *result);
 
 double Norm(vector < double > x, int nb);
 
-void   MultDiOnVect(vector < double > &di, vector < double > &vec, vector < double > &res, int Nb);
-void   MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec, vector < double > &res, int Nb, int m);
+void   MultDiOnVect(vector < double > &di, vector < double > &vec, vector < double > &res, int blockSize);
+void   MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec, vector < double > &res, int blockSize, int m);
 
 void   MultiplyRarefiedMatrixOnVector(
 	  const vector < int    > &ig

@@ -121,10 +121,10 @@ double Norm(vector < double > x, int blockSize)
 	return sqrt(result);
 }
 
-void MultDiOnVect(vector < double > &di, vector < double > &vec, vector < double > &res, int Nb)
+void MultDiOnVect(vector < double > &di, vector < double > &vec, vector < double > &res, int blockSize)
 {
 	double tmp[2];
-	for (int i = 0; i < Nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		tmp[0] = 0;
 		tmp[1] = 0;
@@ -134,9 +134,9 @@ void MultDiOnVect(vector < double > &di, vector < double > &vec, vector < double
 	}
 }
 
-void MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec, vector < double > &res, int Nb, int m)
+void MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec, vector < double > &res, int blockSize, int m)
 {
-	for (int i = 0; i < Nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		res[2 * i   ] = 0;
 		res[2 * i +1] = 0;
