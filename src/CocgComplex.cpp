@@ -74,8 +74,8 @@ void CocgComplex(
 	y.resize(2 * blockSize);
 	SubtractVectors(rightPart, temp, r);
 	double residual = Norm(r, blockSize);
-	double norm0 = Norm(rightPart, blockSize);
-	residual /= norm0;
+	double norm0    = Norm(rightPart, blockSize);
+	residual       /= norm0;
 	double residualSecond = residual;
 	OutputIterationsAndResidual(residual      , 0, "../resources/output/residual1.txt");
 	OutputIterationsAndResidual(residualSecond, 0, "../resources/output/residual2.txt");
@@ -90,8 +90,8 @@ void CocgComplex(
 /*	p = z;
 	s = r;
 	y = result;*/
-	CopyVector(&z[0], &p[0], blockSize);
-	CopyVector(&r[0], &s[0], blockSize);
+	CopyVector(&z[0]     , &p[0], blockSize);
+	CopyVector(&r[0]     , &s[0], blockSize);
 	CopyVector(&result[0], &y[0], blockSize);
 	double etta;
 	int    flag = 0;
@@ -102,13 +102,13 @@ void CocgComplex(
 		ComplexScalarConjugateProduct(r, z, complexNumber1, blockSize);
 		MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, p, Ap, blockSize);
 		ComplexScalarConjugateProduct(Ap, p, complexNumber2, blockSize);
-		DivideComplexNumbers(complexNumber1, complexNumber2, alfa);
+		DivideComplexNumbers(complexNumber1, complexNumber2, alfa); // alpha_j
 
-		ComplexMultiplyVectorScalar(p, alfa, temp, blockSize);
-		SummVectors(result, temp, result);//xj+1
+		ComplexMultiplyVectorScalar(p, alfa, temp, blockSize);      // alpha_j * p_j
+		SummVectors(result, temp, result);                          // x_j+1
 
-		ComplexMultiplyVectorScalar(Ap, alfa, temp, blockSize);
-		SubtractVectors(r, temp, r);//rj+1
+		ComplexMultiplyVectorScalar(Ap, alfa, temp, blockSize);     // alpha_j * A * p_j
+		SubtractVectors(r, temp, r);                                // r_j+1
 		//etta
 		SubtractVectors(r, s, temp_spline);
 		etta = -RealScalarProduct(temp_spline, s) / RealScalarProduct(temp_spline, temp_spline);
@@ -139,11 +139,11 @@ void CocgComplex(
 		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, blockSize);
 #endif
 
-		ComplexScalarConjugateProduct(r, z, complexNumber2, blockSize);//beta
-		DivideComplexNumbers(complexNumber2, complexNumber1, beta);
+		ComplexScalarConjugateProduct(r, z, complexNumber2, blockSize);
+		DivideComplexNumbers(complexNumber2, complexNumber1, beta);     // beta_j
 
-		ComplexMultiplyVectorScalar(p, beta, temp, blockSize);
-		SummVectors(z, temp, p);
+		ComplexMultiplyVectorScalar(p, beta, temp, blockSize);          // beta_j * p_j
+		SummVectors(z, temp, p);                                        // p_j+1
 
 		residual        = Norm(r, blockSize);
 		residual       /= norm0;
@@ -154,6 +154,7 @@ void CocgComplex(
 		printf("residual = %le\r", residual);
 		iteration++;
 	}
+
 	if (flag)
 	{
 		/*y = result;*/
