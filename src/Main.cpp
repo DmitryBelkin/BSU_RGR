@@ -4,9 +4,9 @@
 void main()
 {
 	vector < double > Cdi, Cggl, Cright_part, Cresult;
-	vector < int > Cidi, Cig, Cijg, Cjg;
+	vector < int    > Cidi, Cig, Cijg, Cjg;
 	vector < double > VectorForCheckMatrixVectorSLAEMultiplication;
-	int MaxIter, FullTaskSize, BlockSize;
+	int    MaxIter, FullTaskSize, BlockSize;
 	double eps;
 	
 	InputSparseComplexBlockSLAE("../resources/IN_data", Cdi, Cggl, Cig, Cjg,

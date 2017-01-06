@@ -264,10 +264,9 @@ void MultDiOnVect(
 }
 
 void MultLTMatrixOnVector(
-	vector < int > &LLT_ig,
-	vector < int > &LLT_jg,
-	vector < int > &LLT_ijg,
-	vector < int > &LLT_idi,
+	vector < int    > &LLT_ig,
+	vector < int    > &LLT_jg,
+	vector < int    > &LLT_ijg,
 	vector < double > &LLT_ggl,
 	vector < double > &LLT_di,
 	vector < double > &vec,
@@ -294,13 +293,7 @@ void MultLTMatrixOnVector(
 }
 
 
-void MultVMatrixOnVector(
-	vector < vector < double > > &V,
-	vector < double > vec,
-	vector < double > &res,
-	int Nb, 
-	int m
-	)
+void MultVMatrixOnVector(vector < vector < double > > &V,vector < double > vec,vector < double > &res,int Nb, int m)
 {
 	for (int i = 0; i < Nb; i++)
 	{

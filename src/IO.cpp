@@ -4,15 +4,15 @@ void InputSparseComplexBlockSLAE(
 	char* dirname,
 	vector < double > &di,
 	vector < double > &ggl,
-	vector < int > &ig,
-	vector < int > &jg,
-	vector < int > &idi,
-	vector < int > &ijg,
+	vector < int    > &ig,
+	vector < int    > &jg,
+	vector < int    > &idi,
+	vector < int    > &ijg,
 	vector < double > &righr_part,
-	int &FullTaskSize,
-	int &BlockSize,
-	double &eps,
-	int &MaxIter,
+	int               &FullTaskSize,
+	int               &BlockSize,
+	double            &eps,
+	int               &MaxIter,
 	vector < double > &VectorForCheckMatrixVectorSLAEMultiplication
 	)
 {
@@ -106,92 +106,22 @@ void InputSparseComplexBlockSLAE(
 	fclose(fp);
 }
 
-	//void inputSparceBlockMatrix_from_txt(
-	//	char* filename,
-	//	vector < double > &di,
-	//	vector < double > &ggl,
-	//	vector < int > &ig,
-	//	vector < int > &jg,
-	//	vector < int > &idi,
-	//	vector < int > &ijg,
-	//	vector < double > &righr_part,
-	//	int &FullTaskSize,
-	//	int &BlockSize,
-	//	double &eps,
-	//	int &MaxIter
-	//	)
-	//{
-	//	
-	//	
-	//	FILE *fp;
-	//	fp = fopen_s(filename, "r");
-	//	fscanf_s(fp, "%d%le%d", &FullTaskSize, &eps, &MaxIter);
-	//	BlockSize = FullTaskSize / 2;
-	//	//ig
-	//	ig.resize(BlockSize + 1);	
-	//	for (int i = 0; i < BlockSize + 1; i++)
-	//	{
-	//		fscanf_s(fp, "%d", &ig[i]);
-	//		ig[i]--;
-	//	}
-	//	//idi		
-	//	idi.resize(BlockSize + 1);	
-	//	for (int i = 0; i < BlockSize + 1; i++)
-	//	{
-	//		fscanf_s(fp, "%d", &idi[i]);
-	//		idi[i]--;
-	//	}
-	//	//jg	
-	//	jg.resize(ig[BlockSize]);	
-	//	for (int i = 0; i < jg.size(); i++)
-	//	{
-	//		fscanf_s(fp, "%d", &jg[i]);
-	//		jg[i]--;
-	//	}	
-	//	//ijg		
-	//	ijg.resize(ig[BlockSize] + 1);		
-	//	for (int i = 0; i < ijg.size(); i++)
-	//	{
-	//		fscanf_s(fp, "%d", &ijg[i]);
-	//		ijg[i]--;
-	//	}	
-	//	//ggl		
-	//	ggl.resize(ijg[ig[BlockSize]]);		
-	//	for (int i = 0; i < ggl.size(); i++)
-	//	{
-	//		fscanf_s(fp, "%le", &ggl[i]);
-	//	}		
-	//	//di		
-	//	di.resize(idi[BlockSize]);		
-	//	for (int i = 0; i < di.size(); i++)
-	//	{
-	//		fscanf_s(fp, "%le",&di[i]);
-	//	}		
-	//	//right part		
-	//	righr_part.resize(FullTaskSize);		
-	//	for (int i = 0; i < righr_part.size(); i++)
-	//	{
-	//		fscanf_s(fp, "%le", &righr_part[i]);
-	//	}
-	//	fclose(fp);
-	//}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-	void OutputItersResidual(
-		double Residual, 
-		int IterNumber,
-		char *filename
-		)
+void OutputItersResidual(
+	double Residual, 
+	int IterNumber,
+	char *filename
+	)
+{
+	FILE *fp;
+	if (IterNumber == 0)
 	{
-		FILE *fp;
-		if (IterNumber == 0)
-		{
-			fopen_s(&fp, filename, "w");
-		}
-		else
-		{
-			fopen_s(&fp, filename, "a");
-		}
-		fprintf(fp, "%d\t%.15le\n", IterNumber, Residual);
-		fclose(fp);
+		fopen_s(&fp, filename, "w");
 	}
+	else
+	{
+		fopen_s(&fp, filename, "a");
+	}
+	fprintf(fp, "%d\t%.15le\n", IterNumber, Residual);
+	fclose(fp);
+}

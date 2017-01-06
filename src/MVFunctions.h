@@ -36,7 +36,6 @@ void MultLTMatrixOnVector(
 	vector < int    > &LLT_ig,
 	vector < int    > &LLT_jg,
 	vector < int    > &LLT_ijg,
-	vector < int    > &LLT_idi,
 	vector < double > &LLT_ggl,
 	vector < double > &LLT_di,
 	vector < double > &vec,
