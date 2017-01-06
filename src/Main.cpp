@@ -14,16 +14,16 @@ void InputSlae(
 	vector < double > &rightPart,
 	int               &slaeDimension,
 	int               &blockSize,
-	double            &eps,
+	double            &epsilon,
 	int               &maxiter,
-	vector < double > &VectorForCheckMatrixVectorSLAEMultiplication
+	vector < double > &check
 	)
 {
 	char filename[100];
 	sprintf_s(filename, "%s/kuslau", pathToSlaeDir);
 	FILE *fp;
 	fopen_s(&fp, filename, "r");
-	fscanf_s(fp, "%d%le%d", &slaeDimension, &eps, &maxiter);
+	fscanf_s(fp, "%d%le%d", &slaeDimension, &epsilon, &maxiter);
 	fclose(fp);
 
 	blockSize = slaeDimension / 2;
@@ -94,33 +94,31 @@ void InputSlae(
 		fread(&rightPart[i], sizeof(double), 1, fp);
 	}
 	fclose(fp);
-	//VectorForCheckMatrixVectorSLAEMultiplication
+
 	sprintf_s(filename, "%s/y.txt", pathToSlaeDir);
-	VectorForCheckMatrixVectorSLAEMultiplication.resize(slaeDimension);
+	check.resize(slaeDimension);
 	fopen_s(&fp, filename, "rb");
-	for (int i = 0, size = VectorForCheckMatrixVectorSLAEMultiplication.size(); i < size; ++i)
+	for (int i = 0, size = check.size(); i < size; ++i)
 	{
-		fread(&VectorForCheckMatrixVectorSLAEMultiplication[i], sizeof(double), 1, fp);
+		fread(&check[i], sizeof(double), 1, fp);
 	}
 	fclose(fp);
 }
 
 void main()
 {
-	vector < double > Cdi, Cggl, Cright_part, Cresult;
-	vector < int    > Cidi, Cig, Cijg, Cjg;
-	vector < double > VectorForCheckMatrixVectorSLAEMultiplication;
-	int    maxiter, slaeDimension, blockSize;
-	double eps;
+	vector < double > di, ggl, rightPart, result, check;
+	vector < int    > idi, ig, ijg, jg;
+	int               maxiter, slaeDimension, blockSize;
+	double            epsilon;
 
-	InputSlae(Cdi, Cggl, Cig, Cjg, Cidi, Cijg, Cright_part, slaeDimension, blockSize, eps,
-		maxiter, VectorForCheckMatrixVectorSLAEMultiplication);
+	InputSlae(di, ggl, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter, check);
 
-	Cresult.resize(slaeDimension);
+	result.resize(slaeDimension);
 
 	FILE *fp;
 	fopen_s(&fp, pathToResidual1, "w"); fclose(fp);
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
-	COCG(Cig, Cjg, Cggl, Cdi, Cijg, Cidi, Cright_part, blockSize, Cresult,eps, maxiter);
+	COCG(ig, jg, ggl, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 }
