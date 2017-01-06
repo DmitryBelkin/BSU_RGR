@@ -56,7 +56,7 @@ void CocgComplex(
 	{
 		result[i] = 0.0;
 	}
-	for (i = 0; i < blockSize; i++)
+	for (i = 0; i < blockSize; ++i)
 	{
 		int size = idi[i + 1] - idi[i];
 		if (size == 2)
@@ -161,7 +161,7 @@ void CocgComplex(
 	}
 	MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, result, temp, blockSize);
 	SubtractVectors(temp, rightPart, temp);
-	residual = Norm(temp, blockSize);
+	residual  = Norm(temp, blockSize);
 	residual /= norm0;
 	OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");
 	OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/output/residual2.txt");

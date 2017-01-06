@@ -2,15 +2,15 @@
 #include "MVFunctions.h"
 
 void ResizeL(
-	vector < int    > &LLT_ig       ,
-	vector < int    > &LLT_jg       ,
-	vector < int    > &LLT_ijg      ,
-	vector < int    > &LLT_idi      ,
-	vector < double > &LLT_ggl      ,
-	vector < double > &LLT_di       ,
-	vector < int    > &fullMatrix_jg,
-	vector < int    > &fullMatrix_ig,
-	int blockSize
+	  vector < int    > &LLT_ig
+	, vector < int    > &LLT_jg
+	, vector < int    > &LLT_ijg
+	, vector < int    > &LLT_idi
+	, vector < double > &LLT_ggl
+	, vector < double > &LLT_di
+	, vector < int    > &fullMatrix_jg
+	, vector < int    > &fullMatrix_ig
+	, int blockSize
 	)
 {
 	LLT_ig = fullMatrix_ig;

@@ -148,15 +148,15 @@ void MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec,
 }
 
 void MultiplyRarefiedMatrixOnVector(
-	vector < int    > &ig ,
-	vector < int    > &jg ,
-	vector < double > &ggl,
-	vector < double > &di ,
-	vector < int    > &ijg,
-	vector < int    > &idi,
-	vector < double > &x  ,
-	vector < double > &y  ,
-	int nb
+	  vector < int    > &ig
+	, vector < int    > &jg
+	, vector < double > &ggl
+	, vector < double > &di
+	, vector < int    > &ijg
+	, vector < int    > &idi
+	, vector < double > &x
+	, vector < double > &y
+	, int nb
 	)
 {
 	for (int i = 0; i < nb * 2; ++i) { y[i] = 0; }

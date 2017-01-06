@@ -23,13 +23,13 @@ void   MultDiOnVect(vector < double > &di, vector < double > &vec, vector < doub
 void   MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec, vector < double > &res, int Nb, int m);
 
 void   MultiplyRarefiedMatrixOnVector(
-	vector < int    > &ig ,
-	vector < int    > &jg ,
-	vector < double > &ggl,
-	vector < double > &di ,
-	vector < int    > &ijg,
-	vector < int    > &idi,
-	vector < double > &x  ,
-	vector < double > &y  ,
-	int nb
+	  vector < int    > &ig
+	, vector < int    > &jg
+	, vector < double > &ggl
+	, vector < double > &di
+	, vector < int    > &ijg
+	, vector < int    > &idi
+	, vector < double > &x
+	, vector < double > &y
+	, int nb
 	);
