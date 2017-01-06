@@ -82,11 +82,11 @@ void LLT_Factorization(
 				if (jg[i_cur] == jg[k])
 				{
 					size = LLT_ijg[j+1] - LLT_ijg[j];
-					mult_block(&LLT_ggl[LLT_ijg[k]], sum, &LLT_ggl[LLT_ijg[i_cur]],size);
+					MultiplyBlock(&LLT_ggl[LLT_ijg[k]], sum, &LLT_ggl[LLT_ijg[i_cur]],size);
 				}
 			}
 			//new elem 
-			//sub_complex_numbers(&ggl[ijg[m]], sum, sum);
+			//SubtractComplexNumbers(&ggl[ijg[m]], sum, sum);
 			size = ijg[m + 1] - ijg[m];
 			if (size == 1)
 			{
@@ -98,7 +98,7 @@ void LLT_Factorization(
 				sum[1] = ggl[ijg[m]+1] - sum[1];
 			}
 
-			div_complex_numbers(sum, &LLT_di[LLT_idi[j]], sum);
+			DivideComplexNumbers(sum, &LLT_di[LLT_idi[j]], sum);
 			LLT_ggl[LLT_ijg[m]] = sum[0];
 			LLT_ggl[LLT_ijg[m]+1] = sum[1];
 		}
@@ -108,7 +108,7 @@ void LLT_Factorization(
 		for (int k = ib0; k < ib1; k++)
 		{
 			size = LLT_ijg[k + 1] - LLT_ijg[k];
-			mult_block(&LLT_ggl[LLT_ijg[k]], sum, &LLT_ggl[LLT_ijg[k]], size);
+			MultiplyBlock(&LLT_ggl[LLT_ijg[k]], sum, &LLT_ggl[LLT_ijg[k]], size);
 		}
 		double tmp[2];
 		size = idi[i + 1] - idi[i];
@@ -148,10 +148,10 @@ void SLAE_Forward_Complex(
 		for (int m = ib0; m < ib1; m++)
 		{
 			int j = LLT_jg[m];
-			mult_complex_numbers(&LLT_ggl[LLT_ijg[m]], &result[2 * j], tmp);
-			sub_complex_numbers(&result[2 * i], tmp, &result[2 * i]);
+			MultiplyComplexNumbers(&LLT_ggl[LLT_ijg[m]], &result[2 * j], tmp);
+			SubtractComplexNumbers(&result[2 * i], tmp, &result[2 * i]);
 		}
-		div_complex_numbers(&result[2 * i], &LLT_di[LLT_idi[i]], &result[2 * i]);
+		DivideComplexNumbers(&result[2 * i], &LLT_di[LLT_idi[i]], &result[2 * i]);
 	}
 }
 
@@ -171,7 +171,7 @@ void SLAE_Backward_Complex(
 	double tmp[2];
 	for (int j = Nb - 1; j >= 0; j--)
 	{
-		div_complex_numbers(&result[2 * j], &LLT_di[LLT_idi[j]], &result[2 * j]);
+		DivideComplexNumbers(&result[2 * j], &LLT_di[LLT_idi[j]], &result[2 * j]);
 		int jb0 = LLT_ig[j];
 		int jb1 = LLT_ig[j+1];
 		for (int i = jb0; i < jb1; ++i)
@@ -179,8 +179,8 @@ void SLAE_Backward_Complex(
 			int ib = LLT_jg[i];
 			tmp[0] = 0;
 			tmp[1] = 0;
-			mult_block(&LLT_ggl[LLT_ijg[i]], tmp, &result[2 * j], 2);
-			sub_complex_numbers(&result[2 * ib], tmp, &result[2 * ib]);
+			MultiplyBlock(&LLT_ggl[LLT_ijg[i]], tmp, &result[2 * j], 2);
+			SubtractComplexNumbers(&result[2 * ib], tmp, &result[2 * ib]);
 		}
 	}
 }

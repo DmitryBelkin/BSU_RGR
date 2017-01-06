@@ -55,7 +55,7 @@ void COCG(
 		int size = idi[i + 1] - idi[i];
 		if (size == 2)
 		{
-			di_preconditioning(&di[idi[i]], &inverse_di[2 * i]);
+			DiagonalPreconditioning(&di[idi[i]], &inverse_di[2 * i]);
 		}
 		else
 		{
@@ -66,14 +66,14 @@ void COCG(
 
 	double nev;
 	double nevSecond;
-	mult_MV(ig, jg, ggl, di, ijg, idi, result, temp, nb);
+	MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, result, temp, nb);
 	s.resize(2 * nb);
 	y.resize(2 * nb);
-	sub_vec(right_part, temp, r);
-	norm(r, nev, nb);
+	SubtractVectors(right_part, temp, r);
+	nev = Norm(r, nb);
 	int flag = 0;
 	double norm0;
-	norm(right_part, norm0, nb);
+	norm0 = Norm(right_part, nb);
 	nev /= norm0;
 	nevSecond = nev;
 	OutputIterationsAndResidual(nev, 0, "../resources/OUT_data/nev1.txt");
@@ -91,46 +91,46 @@ void COCG(
 /*	p = z;
 	s = r;
 	y = result;*/
-	copy_vec(&z[0], &p[0], nb);
-	copy_vec(&r[0], &s[0], nb);
-	copy_vec(&result[0], &y[0], nb);
+	CopyVector(&z[0], &p[0], nb);
+	CopyVector(&r[0], &s[0], nb);
+	CopyVector(&result[0], &y[0], nb);
 	int iter = 0;
 	double t_start;
 	double t_end;
 	t_start = omp_get_wtime();
 	while (nevSecond > eps && iter < MaxIter)
 	{
-		conjugate_SK_mult(r, z, complex_number1, nb);
-		mult_MV(ig, jg, ggl, di, ijg, idi, p, Ap, nb);
-		conjugate_SK_mult(Ap, p, complex_number2, nb);
-		div_complex_numbers(complex_number1, complex_number2, alfa);
+		ComplexScalarConjugateProduct(r, z, complex_number1, nb);
+		MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, p, Ap, nb);
+		ComplexScalarConjugateProduct(Ap, p, complex_number2, nb);
+		DivideComplexNumbers(complex_number1, complex_number2, alfa);
 
-		mult_vector_by_scalar(p, alfa, temp, nb);
-		sum_vec(result, temp, result);//xj+1
+		ComplexMultiplyVectorScalar(p, alfa, temp, nb);
+		SummVectors(result, temp, result);//xj+1
 
-		mult_vector_by_scalar(Ap, alfa, temp, nb);
-		sub_vec(r, temp, r);//rj+1
+		ComplexMultiplyVectorScalar(Ap, alfa, temp, nb);
+		SubtractVectors(r, temp, r);//rj+1
 		//etta
-		sub_vec(r, s, temp_spline);
+		SubtractVectors(r, s, temp_spline);
 		etta = -RealScalarProduct(temp_spline, s) / RealScalarProduct(temp_spline, temp_spline);
 		if (etta > 1.0)
 		{
 			flag = 1;
 		/*	y = result;
 			s = r;*/
-			copy_vec(&result[0], &y[0], nb);
-			copy_vec(&r[0], &s[0], nb);
+			CopyVector(&result[0], &y[0], nb);
+			CopyVector(&r[0], &s[0], nb);
 		}
 		else if (etta > 0)
 		{
 			flag = 1;
-			sub_vec(result, s, temp_spline);
-			RealMultVector_by_Scalar(temp_spline, etta, temp_spline);
-			sum_vec(y, temp_spline, y);
+			SubtractVectors(result, s, temp_spline);
+			RealMultiplyVectorScalar(temp_spline, etta, temp_spline);
+			SummVectors(y, temp_spline, y);
 
-			sub_vec(r, s, temp_spline);
-			RealMultVector_by_Scalar(temp_spline, etta, temp_spline);
-			sum_vec(s, temp_spline, s);
+			SubtractVectors(r, s, temp_spline);
+			RealMultiplyVectorScalar(temp_spline, etta, temp_spline);
+			SummVectors(s, temp_spline, s);
 		}
 
 		
@@ -144,15 +144,15 @@ void COCG(
 			SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, nb);
 		}
 
-		conjugate_SK_mult(r, z, complex_number2, nb);//beta
-		div_complex_numbers(complex_number2, complex_number1, beta);
+		ComplexScalarConjugateProduct(r, z, complex_number2, nb);//beta
+		DivideComplexNumbers(complex_number2, complex_number1, beta);
 
-		mult_vector_by_scalar(p, beta, temp, nb);
-		sum_vec(z, temp, p);
+		ComplexMultiplyVectorScalar(p, beta, temp, nb);
+		SummVectors(z, temp, p);
 
-		norm(r, nev, nb);
+		nev = Norm(r, nb);
 		nev /= norm0;
-		norm(s, nevSecond, nb);
+		nevSecond = Norm(s, nb);
 		nevSecond /= norm0;
 		OutputIterationsAndResidual(nev, iter+1, "../resources/OUT_data/nev1.txt");
 		OutputIterationsAndResidual(nevSecond, iter+1, "../resources/OUT_data/nev2.txt");
@@ -162,11 +162,11 @@ void COCG(
 	if (flag)
 	{
 		/*y = result;*/
-		copy_vec(&result[0], &y[0], nb);
+		CopyVector(&result[0], &y[0], nb);
 	}
-	mult_MV(ig, jg, ggl, di, ijg, idi, result, temp, nb);
-	sub_vec(temp, right_part, temp);
-	norm(temp, nev, nb);
+	MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, result, temp, nb);
+	SubtractVectors(temp, right_part, temp);
+	nev = Norm(temp, nb);
 	nev /= norm0;
 	OutputIterationsAndResidual(nev      , iter + 1, "../resources/OUT_data/nev1.txt");
 	OutputIterationsAndResidual(nevSecond, iter + 1, "../resources/OUT_data/nev2.txt");
