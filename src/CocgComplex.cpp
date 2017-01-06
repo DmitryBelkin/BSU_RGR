@@ -17,17 +17,17 @@ void OutputIterationsAndResidual(const double residual, const int iteration, con
 }
 
 void CocgComplex(
-	  vector < int    > &ig
-	, vector < int    > &jg
-	, vector < double > &ggl
-	, vector < double > &di
-	, vector < int    > &ijg
-	, vector < int    > &idi
-	, vector < double > &rightPart
-	, int                blockSize
-	, vector < double > &result
-	, double             epsilon
-	, int                maxiter
+	        vector < int    > &ig
+	,       vector < int    > &jg
+	,       vector < double > &ggl
+	,       vector < double > &di
+	,       vector < int    > &ijg
+	,       vector < int    > &idi
+	,       vector < double > &rightPart
+	, const int                blockSize
+	,       vector < double > &result
+	, const double             epsilon
+	, const int                maxiter
 	)
 {
 #if LLT_FACTORIZATION

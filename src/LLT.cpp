@@ -2,15 +2,15 @@
 #include "MVFunctions.h"
 
 void ResizeL(
-	  vector < int    > &LLT_ig
-	, vector < int    > &LLT_jg
-	, vector < int    > &LLT_ijg
-	, vector < int    > &LLT_idi
-	, vector < double > &LLT_ggl
-	, vector < double > &LLT_di
-	, vector < int    > &fullMatrix_jg
-	, vector < int    > &fullMatrix_ig
-	, int blockSize
+	        vector < int    > &LLT_ig
+	,       vector < int    > &LLT_jg
+	,       vector < int    > &LLT_ijg
+	,       vector < int    > &LLT_idi
+	,       vector < double > &LLT_ggl
+	,       vector < double > &LLT_di
+	,       vector < int    > &fullMatrix_jg
+	,       vector < int    > &fullMatrix_ig
+	, const int                blockSize
 	)
 {
 	LLT_ig = fullMatrix_ig;
@@ -40,19 +40,19 @@ void SqrtComplex(double *ab, double*xy)
 }
 
 void LLT_Factorization(
-	  vector < int    > &ig
-	, vector < int    > &jg
-	, vector < int    > &ijg
-	, vector < int    > &idi
-	, vector < double > &ggl
-	, vector < double > &di
-	, vector < int    > &LLT_ig
-	, vector < int    > &LLT_jg
-	, vector < int    > &LLT_ijg
-	, vector < int    > &LLT_idi
-	, vector < double > &LLT_ggl
-	, vector < double > &LLT_di
-	, int blockSize
+	        vector < int    > &ig
+	,       vector < int    > &jg
+	,       vector < int    > &ijg
+	,       vector < int    > &idi
+	,       vector < double > &ggl
+	,       vector < double > &di
+	,       vector < int    > &LLT_ig
+	,       vector < int    > &LLT_jg
+	,       vector < int    > &LLT_ijg
+	,       vector < int    > &LLT_idi
+	,       vector < double > &LLT_ggl
+	,       vector < double > &LLT_di
+	, const int               blockSize
 	)
 {
 	ResizeL(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, jg, ig, blockSize);
@@ -128,15 +128,15 @@ void LLT_Factorization(
 }
 
 void SLAE_Forward_Complex(
-	  vector < int    > &LLT_ig
-	, vector < int    > &LLT_jg
-	, vector < int    > &LLT_ijg
-	, vector < int    > &LLT_idi
-	, vector < double > &LLT_ggl
-	, vector < double > &LLT_di
-	, vector < double > &rightPart
-	, vector < double > &result
-	, int blockSize
+	        vector < int    > &LLT_ig
+	,       vector < int    > &LLT_jg
+	,       vector < int    > &LLT_ijg
+	,       vector < int    > &LLT_idi
+	,       vector < double > &LLT_ggl
+	,       vector < double > &LLT_di
+	,       vector < double > &rightPart
+	,       vector < double > &result
+	, const int                blockSize
 	)
 {
 	result = rightPart;
@@ -156,15 +156,15 @@ void SLAE_Forward_Complex(
 }
 
 void SLAE_Backward_Complex(
-	  vector < int    > &LLT_ig
-	, vector < int    > &LLT_jg
-	, vector < int    > &LLT_ijg
-	, vector < int    > &LLT_idi
-	, vector < double > &LLT_ggl
-	, vector < double > &LLT_di
-	, vector < double > &rightPart
-	, vector < double > &result
-	, int blockSize
+	        vector < int    > &LLT_ig
+	,       vector < int    > &LLT_jg
+	,       vector < int    > &LLT_ijg
+	,       vector < int    > &LLT_idi
+	,       vector < double > &LLT_ggl
+	,       vector < double > &LLT_di
+	,       vector < double > &rightPart
+	,       vector < double > &result
+	, const int                blockSize
 	)
 {
 	result = rightPart;

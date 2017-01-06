@@ -10,12 +10,12 @@ double RealScalarProduct(vector < double > &vec1,vector < double > &vec2)
 	return result;
 }
 
-void ComplexScalarConjugateProduct(vector < double > &x, vector < double > &y, double  *result, int nb)
+void ComplexScalarConjugateProduct(vector < double > &x, vector < double > &y, double  *result, int blockSize)
 {
 	result[0] = 0.0;
 	result[1] = 0.0;
 	double temporaryResult[2];
-	for (int i = 0; i < nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		MultiplyComplexNumbers(&x[2 * i], &y[2 * i], temporaryResult);
 		result[0] += temporaryResult[0];
@@ -31,9 +31,9 @@ void RealMultiplyVectorScalar(vector < double > &vec, double scalar, vector < do
 	}
 }
 
-void ComplexMultiplyVectorScalar(vector < double > &vec, double *skalar, vector < double > &result, int nb)
+void ComplexMultiplyVectorScalar(vector < double > &vec, double *skalar, vector < double > &result, int blockSize)
 {
-	for (int i = 0; i < nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		MultiplyComplexNumbers(&vec[2 * i], skalar, &result[2 * i]);
 	}
@@ -111,10 +111,10 @@ void DiagonalPreconditioning(double * x, double *result)
 	DivideComplexNumbers(complex_one, x, result);
 }
 
-double Norm(vector < double > x, int nb)
+double Norm(vector < double > x, int blockSize)
 {
 	double result = 0;
-	for (int i = 0; i < nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		result += x[2 * i] * x[2 * i] + x[2 * i + 1] * x[2 * i + 1];
 	}
@@ -148,24 +148,24 @@ void MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec,
 }
 
 void MultiplyRarefiedMatrixOnVector(
-	  vector < int    > &ig
-	, vector < int    > &jg
-	, vector < double > &ggl
-	, vector < double > &di
-	, vector < int    > &ijg
-	, vector < int    > &idi
-	, vector < double > &x
-	, vector < double > &y
-	, int nb
+	  const vector < int    > &ig
+	, const vector < int    > &jg
+	,       vector < double > &ggl
+	,       vector < double > &di
+	, const vector < int    > &ijg
+	, const vector < int    > &idi
+	,       vector < double > &x
+	,       vector < double > &y
+	, const int blockSize
 	)
 {
-	for (int i = 0; i < nb * 2; ++i) { y[i] = 0; }
-	for (int i = 0; i < nb    ; ++i)
+	for (int i = 0; i < blockSize * 2; ++i) { y[i] = 0; }
+	for (int i = 0; i < blockSize    ; ++i)
 	{
 		int size = idi[i + 1] - idi[i];
 		MultiplyBlock(&x[i * 2], &y[i * 2], &di[idi[i]], size);
 	}
-	for (int i = 0; i < nb; ++i)
+	for (int i = 0; i < blockSize; ++i)
 	{
 		for (int j = ig[i]; j < ig[i + 1]; ++j)
 		{
