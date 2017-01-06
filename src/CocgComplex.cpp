@@ -24,7 +24,7 @@ void CocgComplex(
 	vector < double > &rightPart,
 	int                nb        ,
 	vector < double > &result    ,
-	double             eps       ,
+	double             epsilon       ,
 	int                maxiter
 	)
 {
@@ -97,7 +97,7 @@ void CocgComplex(
 	CopyVector(&result[0], &y[0], nb);
 	int iter = 0;
 	double timeStart = omp_get_wtime();
-	while (nevSecond > eps && iter < maxiter)
+	while (nevSecond > epsilon && iter < maxiter)
 	{
 		ComplexScalarConjugateProduct(r, z, complexNumber1, nb);
 		MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, p, Ap, nb);
