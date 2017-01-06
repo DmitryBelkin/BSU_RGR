@@ -4,7 +4,8 @@
 
 const char * timeMeasurements = "../resources/timeMeasurements.txt";
 
-#define DIAGONAL_FACTORIZATION 0; //1 - di, 2 - LLT
+// иначе LLT
+#define DIAGONAL_FACTORIZATION 0
 
 void OutputIterationsAndResidual(const double residual, const int iteration, const char *filename)
 {
@@ -67,20 +68,20 @@ void CocgComplex(
 		}
 	}
 
-	double nev;
-	double nevSecond;
+	double residual;
+	double residualSecond;
 	MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, result, temp, nb);
 	s.resize(2 * nb);
 	y.resize(2 * nb);
 	SubtractVectors(rightPart, temp, r);
-	nev = Norm(r, nb);
+	residual = Norm(r, nb);
 	int flag = 0;
 	double norm0;
 	norm0 = Norm(rightPart, nb);
-	nev /= norm0;
-	nevSecond = nev;
-	OutputIterationsAndResidual(nev, 0, "../resources/OUT_data/nev1.txt");
-	OutputIterationsAndResidual(nevSecond, 0, "../resources/OUT_data/nev2.txt");
+	residual /= norm0;
+	residualSecond = residual;
+	OutputIterationsAndResidual(residual, 0, "../resources/OUT_data/nev1.txt");
+	OutputIterationsAndResidual(residualSecond, 0, "../resources/OUT_data/nev2.txt");
 
 #if DIAGONAL_FACTORIZATION
 	MultDiOnVect(inverseDi, r, z, nb);
@@ -95,9 +96,9 @@ void CocgComplex(
 	CopyVector(&z[0], &p[0], nb);
 	CopyVector(&r[0], &s[0], nb);
 	CopyVector(&result[0], &y[0], nb);
-	int iter = 0;
+	int iteration = 0;
 	double timeStart = omp_get_wtime();
-	while (nevSecond > epsilon && iter < maxiter)
+	while (residualSecond > epsilon && iteration < maxiter)
 	{
 		ComplexScalarConjugateProduct(r, z, complexNumber1, nb);
 		MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, p, Ap, nb);
@@ -145,14 +146,14 @@ void CocgComplex(
 		ComplexMultiplyVectorScalar(p, beta, temp, nb);
 		SummVectors(z, temp, p);
 
-		nev = Norm(r, nb);
-		nev /= norm0;
-		nevSecond = Norm(s, nb);
-		nevSecond /= norm0;
-		OutputIterationsAndResidual(nev, iter+1, "../resources/OUT_data/nev1.txt");
-		OutputIterationsAndResidual(nevSecond, iter+1, "../resources/OUT_data/nev2.txt");
-		printf("nev = %le\r", nev);
-		iter++;
+		residual = Norm(r, nb);
+		residual /= norm0;
+		residualSecond = Norm(s, nb);
+		residualSecond /= norm0;
+		OutputIterationsAndResidual(residual, iteration + 1, "../resources/OUT_data/nev1.txt");
+		OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/OUT_data/nev2.txt");
+		printf("nev = %le\r", residual);
+		iteration++;
 	}
 	if (flag)
 	{
@@ -161,12 +162,12 @@ void CocgComplex(
 	}
 	MultiplyRarefiedMatrixOnVector(ig, jg, ggl, di, ijg, idi, result, temp, nb);
 	SubtractVectors(temp, rightPart, temp);
-	nev = Norm(temp, nb);
-	nev /= norm0;
-	OutputIterationsAndResidual(nev      , iter + 1, "../resources/OUT_data/nev1.txt");
-	OutputIterationsAndResidual(nevSecond, iter + 1, "../resources/OUT_data/nev2.txt");
-	printf("\nEnd nev = %le\n", nev);
-	printf("\nIters\t=\t%d\n", iter);
+	residual = Norm(temp, nb);
+	residual /= norm0;
+	OutputIterationsAndResidual(residual      , iteration + 1, "../resources/OUT_data/nev1.txt");
+	OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/OUT_data/nev2.txt");
+	printf("\nEnd nev = %le\n", residual);
+	printf("\nIters\t=\t%d\n", iteration);
 	double timeEnd = omp_get_wtime();
 	FILE *fp;
 	fopen_s(&fp, timeMeasurements, "a");
