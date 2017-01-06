@@ -1,5 +1,4 @@
 #include "MVFunctions.h"
-#include "IO.h"
 
 void COCG(
 	vector < int    > &ig,

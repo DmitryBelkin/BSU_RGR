@@ -2,6 +2,25 @@
 #include "LLT.h"
 #include <omp.h>
 
+void OutputItersResidual(
+	double Residual, 
+	int IterNumber,
+	char *filename
+	)
+{
+	FILE *fp;
+	if (IterNumber == 0)
+	{
+		fopen_s(&fp, filename, "w");
+	}
+	else
+	{
+		fopen_s(&fp, filename, "a");
+	}
+	fprintf(fp, "%d\t%.15le\n", IterNumber, Residual);
+	fclose(fp);
+}
+
 void COCG(
 	vector < int    > &ig        ,
 	vector < int    > &jg        ,

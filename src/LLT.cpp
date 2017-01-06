@@ -2,37 +2,35 @@
 #include "MVFunctions.h"
 
 void ResizeL(
-	vector < int    > &LLT_ig,
-	vector < int    > &LLT_jg,
-	vector < int    > &LLT_ijg,
-	vector < int    > &LLT_idi,
-	vector < double > &LLT_ggl,
-	vector < double > &LLT_di,
+	vector < int    > &LLT_ig       ,
+	vector < int    > &LLT_jg       ,
+	vector < int    > &LLT_ijg      ,
+	vector < int    > &LLT_idi      ,
+	vector < double > &LLT_ggl      ,
+	vector < double > &LLT_di       ,
 	vector < int    > &fullMatrix_jg,
 	vector < int    > &fullMatrix_ig,
 	int Nb
 	)
 {
 	LLT_ig = fullMatrix_ig;
-
 	LLT_jg = fullMatrix_jg;
 
 	LLT_ijg.resize(LLT_ig.back() + 1);
 	LLT_ijg[0] = 0;
 	//все блоки в разложении имеют размер 2
-	for (int i = 1; i < LLT_ijg.size(); i++)
+	for (int i = 1, size = LLT_ijg.size(); i < size; i++)
 	{
 		LLT_ijg[i] = LLT_ijg[i - 1] + 2;
 	}
 	LLT_ggl.resize(LLT_ijg[LLT_ig.back()]);
 	LLT_idi.resize(Nb + 1);
 	LLT_idi[0] = 0;
-	for (int i = 1; i < LLT_idi.size(); i++)
+	for (int i = 1, size = LLT_idi.size(); i < size; i++)
 	{
 		LLT_idi[i] = LLT_idi[i - 1] + 2;
 	}
 	LLT_di.resize(LLT_idi.back());
-
 }
 
 void SqrtComplex(double *ab, double*xy)
@@ -42,23 +40,22 @@ void SqrtComplex(double *ab, double*xy)
 }
 
 void LLT_Factorization(
-	vector < int    > &ig, 
+	vector < int    > &ig,
 	vector < int    > &jg,
 	vector < int    > &ijg,
 	vector < int    > &idi,
-	vector < double > &ggl, 
+	vector < double > &ggl,
 	vector < double > &di,
 	vector < int    > &LLT_ig,
 	vector < int    > &LLT_jg,
 	vector < int    > &LLT_ijg,
 	vector < int    > &LLT_idi,
 	vector < double > &LLT_ggl,
-	vector < double > &LLT_di, 
+	vector < double > &LLT_di,
 	int Nb
 	)
 {
 	ResizeL(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, jg, ig, Nb);
-	int cur_bloxk = 0;
 	double sum[2];
 	int size;
 	for (int i = 0; i < Nb; i++)
@@ -172,24 +169,12 @@ void SLAE_Backward_Complex(
 {
 	result = right_part;
 	double tmp[2];
-	/*for (int i = 0; i < Nb; i++)
-	{
-		int ib0 = LLT_ig[i];
-		int ib1 = LLT_ig[i + 1];
-		for (int m = ib0; m < ib1; m++)
-		{
-			int j = LLT_jg[m];
-			mult_complex_numbers(&LLT_ggl[LLT_ijg[m]], &result[2 * j], tmp);
-			sub_complex_numbers(&result[2 * i], tmp, &result[2 * i]);
-		}
-		div_complex_numbers(&right_part[2 * i], &LLT_di[LLT_idi[i]], &result[2 * i]);
-	}*/
 	for (int j = Nb - 1; j >= 0; j--)
 	{
 		div_complex_numbers(&result[2 * j], &LLT_di[LLT_idi[j]], &result[2 * j]);
 		int jb0 = LLT_ig[j];
 		int jb1 = LLT_ig[j+1];
-		for (int i = jb0; i < jb1; i++)
+		for (int i = jb0; i < jb1; ++i)
 		{
 			int ib = LLT_jg[i];
 			tmp[0] = 0;
@@ -198,5 +183,4 @@ void SLAE_Backward_Complex(
 			sub_complex_numbers(&result[2 * ib], tmp, &result[2 * ib]);
 		}
 	}
-
 }
