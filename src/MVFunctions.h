@@ -10,7 +10,6 @@ void   MultiplyBlock(const double *x, double *dest, const double *a, const int s
 void   MultiplyComplexNumbers(const double *x, const double *y, double *result);
 void   DivideComplexNumbers  (const double *x, const double *y, double *result);
 void   SubtractComplexNumbers(const double *x, const double *y, double *result);
-void   CopyVector(const double *source, double *dest, const int size);
 
 void   SubtractVectors(const vector < double > &x, const vector < double > &y, vector < double > &result);
 void   SummVectors    (const vector < double > &x, const vector < double > &y, vector < double > &result);

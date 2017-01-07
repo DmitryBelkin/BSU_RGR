@@ -79,14 +79,6 @@ void SubtractComplexNumbers(const double *x, const double *y, double *result)
 	result[1] = x[1] - y[1];
 }
 
-void CopyVector(const double *source, double *dest, const int size) // копирование комплексного вектора
-{
-	for (int i = 0; i < 2 * size; i++)
-	{
-		dest[i] = source[i];
-	}
-}
-
 void SubtractVectors(const vector < double > &x, const vector < double > &y, vector < double > &result)
 {
 	for (int i = 0, size = x.size(); i < size; ++i)

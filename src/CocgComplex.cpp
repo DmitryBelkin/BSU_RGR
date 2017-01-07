@@ -84,13 +84,10 @@ void CocgComplex(
 	SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize);
 #endif
 
-/*	p = z;
+	p = z;
 	s = r;
-	y = result;*/
+	y = result;
 
-	CopyVector(&z[0]     , &p[0], blockSize);
-	CopyVector(&r[0]     , &s[0], blockSize);
-	CopyVector(&result[0], &y[0], blockSize);
 	double etta;
 	int    flag = 0;
 	int    iteration = 0;
@@ -115,10 +112,8 @@ void CocgComplex(
 		if (etta > 1.0)
 		{
 			flag = 1;
-		/*	y = result;
-			s = r;*/
-			CopyVector(&result[0], &y[0], blockSize);
-			CopyVector(&r     [0], &s[0], blockSize);
+			y = result;
+			s = r;
 		}
 		else if (etta > 0)
 		{
@@ -157,8 +152,7 @@ void CocgComplex(
 
 	if (flag)
 	{
-		/*y = result;*/
-		CopyVector(&result[0], &y[0], blockSize);
+		y = result;
 	}
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
 	SubtractVectors(temp, rightPart, temp);
