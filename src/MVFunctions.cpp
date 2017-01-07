@@ -126,19 +126,6 @@ void MultDiOnVect(const vector < double > &di, const vector < double > &vec, vec
 	}
 }
 
-void MultVMatrixOnVector(const vector < vector < double > > &V, const vector < double > vec, vector < double > &result, const int blockSize, const int m)
-{
-	for (int i = 0; i < blockSize; ++i)
-	{
-		result[2 * i   ] = 0;
-		result[2 * i +1] = 0;
-		for (int j = 0; j < m; ++j)
-		{
-			MultiplyBlock(&V[j][2 * i], &result[2 * i], &vec[2 * j], 2);
-		}
-	}	
-}
-
 void MultiplyRarefiedMatrixOnVector(
 	  const vector < int    > &ig
 	, const vector < int    > &jg
