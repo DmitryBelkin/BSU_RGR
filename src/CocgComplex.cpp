@@ -70,9 +70,8 @@ void CocgComplex(
 	s.resize(2 * blockSize);
 	y.resize(2 * blockSize);
 	SubtractVectors(rightPart, temp, r);
-	double residual = Norm(r, blockSize);
-	double norm0    = Norm(rightPart, blockSize);
-	residual       /= norm0;
+	const double normRightPart = Norm(rightPart, blockSize);
+	double residual = Norm(r, blockSize) / normRightPart;
 	double residualSecond = residual;
 	OutputIterationsAndResidual(residual      , 0, "../resources/output/residual1.txt");
 	OutputIterationsAndResidual(residualSecond, 0, "../resources/output/residual2.txt");
@@ -96,9 +95,9 @@ void CocgComplex(
 
 	while (residualSecond > epsilon && iteration < maxiter)
 	{
-		ComplexScalarConjugateProduct(r, z, complexNumber1, blockSize);
-		MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, p, Ap, blockSize);
-		ComplexScalarConjugateProduct(Ap, p, complexNumber2, blockSize);
+		ComplexScalarConjugateProduct (r, z, complexNumber1, blockSize); // ?
+		MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, p, Ap, blockSize); // Ap_j
+		ComplexScalarConjugateProduct(Ap, p, complexNumber2, blockSize); // ( _(Ap_j), p_j )
 		DivideComplexNumbers(complexNumber1, complexNumber2, alfa); // alpha_j
 
 		ComplexMultiplyVectorScalar(p, alfa, temp, blockSize);      // alpha_j * p_j
@@ -141,9 +140,9 @@ void CocgComplex(
 		SummVectors(z, temp, p);                                        // p_j+1
 
 		residual        = Norm(r, blockSize);
-		residual       /= norm0;
+		residual       /= normRightPart;
 		residualSecond  = Norm(s, blockSize);
-		residualSecond /= norm0;
+		residualSecond /= normRightPart;
 		OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");
 		OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/output/residual2.txt");
 		printf("residual = %le\r", residual);
@@ -157,7 +156,7 @@ void CocgComplex(
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
 	SubtractVectors(temp, rightPart, temp);
 	residual  = Norm(temp, blockSize);
-	residual /= norm0;
+	residual /= normRightPart;
 	OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");
 	OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/output/residual2.txt");
 	printf("end residual\t=\t%le\n", residual);
