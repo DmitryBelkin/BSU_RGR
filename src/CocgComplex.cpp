@@ -95,16 +95,16 @@ void CocgComplex(
 
 	while (residualSecond > epsilon && iteration < maxiter)
 	{
-		ComplexScalarConjugateProduct (r, z, complexNumber1, blockSize); // ?
-		MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, p, Ap, blockSize); // Ap_j
-		ComplexScalarConjugateProduct(Ap, p, complexNumber2, blockSize); // ( _(Ap_j), p_j )
-		DivideComplexNumbers(complexNumber1, complexNumber2, alfa); // alpha_j
+		ComplexScalarConjugateProduct (r, z, complexNumber1, blockSize);            // ( _(r_j), z_j )
+		MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, p, Ap, blockSize); //     A * p_j
+		ComplexScalarConjugateProduct(Ap, p, complexNumber2, blockSize);            // ( _(A * p_j), p_j )
+		DivideComplexNumbers(complexNumber1, complexNumber2, alfa);                 // alpha_j
 
-		ComplexMultiplyVectorScalar(p, alfa, temp, blockSize);      // alpha_j * p_j
-		SummVectors(result, temp, result);                          // x_j+1
+		ComplexMultiplyVectorScalar(p, alfa, temp, blockSize);                      // alpha_j * p_j
+		SummVectors(result, temp, result);                                          // x_j+1
 
-		ComplexMultiplyVectorScalar(Ap, alfa, temp, blockSize);     // alpha_j * A * p_j
-		SubtractVectors(r, temp, r);                                // r_j+1
+		ComplexMultiplyVectorScalar(Ap, alfa, temp, blockSize);                     // alpha_j * A * p_j
+		SubtractVectors(r, temp, r);                                                // r_j+1
 
 		SubtractVectors(r, s, test);
 		etta = -RealScalarProduct(test, s) / RealScalarProduct(test, test);
@@ -127,10 +127,10 @@ void CocgComplex(
 		}
 
 #if DIAGONAL_FACTORIZATION
-		MultDiOnVect(di_1, r, z, blockSize);//zj+1*/
+		MultDiOnVect(di_1, r, z, blockSize); // z_j+1
 #else
 		SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, r, z, blockSize);
-		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize);
+		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize); // z_j+1
 #endif
 
 		ComplexScalarConjugateProduct(r, z, complexNumber2, blockSize);
