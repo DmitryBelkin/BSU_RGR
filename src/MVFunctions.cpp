@@ -150,7 +150,7 @@ void MultVMatrixOnVector(const vector < vector < double > > &V, const vector < d
 void MultiplyRarefiedMatrixOnVector(
 	  const vector < int    > &ig
 	, const vector < int    > &jg
-	,       vector < double > &ggl
+	,       vector < double > &gg
 	,       vector < double > &di
 	, const vector < int    > &ijg
 	, const vector < int    > &idi
@@ -170,8 +170,8 @@ void MultiplyRarefiedMatrixOnVector(
 		for (int j = ig[i]; j < ig[i + 1]; ++j)
 		{
 			int size = ijg[j + 1] - ijg[j];
-			MultiplyBlock(&x[jg[j] * 2], &y[i     * 2], &ggl[ijg[j]], size);
-			MultiplyBlock(&x[i     * 2], &y[jg[j] * 2], &ggl[ijg[j]], size);
+			MultiplyBlock(&x[jg[j] * 2], &y[i     * 2], &gg[ijg[j]], size);
+			MultiplyBlock(&x[i     * 2], &y[jg[j] * 2], &gg[ijg[j]], size);
 		}
 	}
 }

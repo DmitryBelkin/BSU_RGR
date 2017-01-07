@@ -25,7 +25,7 @@ void   MultVMatrixOnVector(const vector < vector < double > > &V, const vector <
 void   MultiplyRarefiedMatrixOnVector(
 	  const vector < int    > &ig
 	, const vector < int    > &jg
-	,       vector < double > &ggl
+	,       vector < double > &gg
 	,       vector < double > &di
 	, const vector < int    > &ijg
 	, const vector < int    > &idi

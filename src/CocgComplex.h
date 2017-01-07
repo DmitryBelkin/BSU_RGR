@@ -3,7 +3,7 @@
 void CocgComplex(
 	        vector < int    > &ig
 	,       vector < int    > &jg
-	,       vector < double > &ggl
+	,       vector < double > &gg
 	,       vector < double > &di
 	,       vector < int    > &ijg
 	,       vector < int    > &idi

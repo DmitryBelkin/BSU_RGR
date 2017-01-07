@@ -6,7 +6,7 @@ const char * pathToSlaeDir   = "../resources/input";
 
 void InputSlae(
 	  vector < double > &di
-	, vector < double > &ggl
+	, vector < double > &gg
 	, vector < int    > &ig
 	, vector < int    > &jg
 	, vector < int    > &idi
@@ -69,11 +69,11 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/gg", pathToSlaeDir);
-	ggl.resize(ijg[ig[blockSize]]);
+	gg.resize(ijg[ig[blockSize]]);
 	fopen_s(&fp, filename, "rb");
-	for (int i = 0, size = ggl.size(); i < size; ++i)
+	for (int i = 0, size = gg.size(); i < size; ++i)
 	{
-		fread(&ggl[i], sizeof(double), 1, fp);	
+		fread(&gg[i], sizeof(double), 1, fp);	
 	}
 	fclose(fp);
 
@@ -107,12 +107,12 @@ void InputSlae(
 
 void main()
 {
-	vector < double > di, ggl, rightPart, result, check;
+	vector < double > di, gg, rightPart, result, check;
 	vector < int    > idi, ig, ijg, jg;
 	int               maxiter, slaeDimension, blockSize;
 	double            epsilon;
 
-	InputSlae(di, ggl, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter, check);
+	InputSlae(di, gg, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter, check);
 
 	printf("slaeDimension\t=\t%d\n", slaeDimension);
 	printf("maxiter\t=\t%d\n", maxiter);
@@ -123,7 +123,7 @@ void main()
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
 	result.resize(slaeDimension);
-	CocgComplex(ig, jg, ggl, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
+	CocgComplex(ig, jg, gg, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 
 	// output
 	fopen_s(&fp, "../resources/output/true_soulution.txt", "w");
