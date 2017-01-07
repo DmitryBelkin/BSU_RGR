@@ -36,20 +36,20 @@ void CocgComplex(
 	LLT_Factorization(ig, jg, ijg, idi, ggl, di, LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, blockSize);
 #endif
 
-	vector < double > inverseDi;
-	inverseDi.resize(2 * blockSize);
 	vector < double > temp;
 	vector < double > p, z, r;
 	vector < double > Ap;
 	double alfa[2], beta[2];
 	double complexNumber1[2], complexNumber2[2];
-	vector < double > y, s, temp_spline;
+	vector < double > y, s, test;
+	vector < double > di_1;
+	di_1.resize(2 * blockSize);
 	p   .resize(2 * blockSize);
 	z   .resize(2 * blockSize);
 	r   .resize(2 * blockSize);
 	Ap  .resize(2 * blockSize);
 	temp.resize(2 * blockSize);
-	temp_spline.resize(2 * blockSize);
+	test.resize(2 * blockSize);
 	int i = 0;
 	for (i = 0; i < 2 * blockSize; ++i)
 	{
@@ -60,12 +60,12 @@ void CocgComplex(
 		int size = idi[i + 1] - idi[i];
 		if (size == 2)
 		{
-			DiagonalPreconditioning(&di[idi[i]], &inverseDi[2 * i]);
+			DiagonalPreconditioning(&di[idi[i]], &di_1[2 * i]);
 		}
 		else
 		{
-			inverseDi[2 * i] = 1.0 / di[idi[i]];
-			inverseDi[2 * i + 1] = 0;
+			di_1[2 * i    ] = 1.0 / di[idi[i]];
+			di_1[2 * i + 1] = 0.0;
 		}
 	}
 
@@ -81,7 +81,7 @@ void CocgComplex(
 	OutputIterationsAndResidual(residualSecond, 0, "../resources/output/residual2.txt");
 
 #if DIAGONAL_FACTORIZATION
-	MultDiOnVect(inverseDi, r, z, blockSize);
+	MultDiOnVect(di_1, r, z, blockSize);
 #else
 	SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, blockSize);
 	SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, blockSize);
@@ -90,6 +90,7 @@ void CocgComplex(
 /*	p = z;
 	s = r;
 	y = result;*/
+
 	CopyVector(&z[0]     , &p[0], blockSize);
 	CopyVector(&r[0]     , &s[0], blockSize);
 	CopyVector(&result[0], &y[0], blockSize);
@@ -97,6 +98,7 @@ void CocgComplex(
 	int    flag = 0;
 	int    iteration = 0;
 	const double timeStart = omp_get_wtime();
+
 	while (residualSecond > epsilon && iteration < maxiter)
 	{
 		ComplexScalarConjugateProduct(r, z, complexNumber1, blockSize);
@@ -109,31 +111,31 @@ void CocgComplex(
 
 		ComplexMultiplyVectorScalar(Ap, alfa, temp, blockSize);     // alpha_j * A * p_j
 		SubtractVectors(r, temp, r);                                // r_j+1
-		//etta
-		SubtractVectors(r, s, temp_spline);
-		etta = -RealScalarProduct(temp_spline, s) / RealScalarProduct(temp_spline, temp_spline);
+
+		SubtractVectors(r, s, test);
+		etta = -RealScalarProduct(test, s) / RealScalarProduct(test, test);
 		if (etta > 1.0)
 		{
 			flag = 1;
 		/*	y = result;
 			s = r;*/
 			CopyVector(&result[0], &y[0], blockSize);
-			CopyVector(&r[0], &s[0], blockSize);
+			CopyVector(&r     [0], &s[0], blockSize);
 		}
 		else if (etta > 0)
 		{
 			flag = 1;
-			SubtractVectors(result, s, temp_spline);
-			RealMultiplyVectorScalar(temp_spline, etta, temp_spline);
-			SummVectors(y, temp_spline, y);
+			SubtractVectors(result, s, test);
+			RealMultiplyVectorScalar(test, etta, test);
+			SummVectors(y, test, y);
 
-			SubtractVectors(r, s, temp_spline);
-			RealMultiplyVectorScalar(temp_spline, etta, temp_spline);
-			SummVectors(s, temp_spline, s);
+			SubtractVectors(r, s, test);
+			RealMultiplyVectorScalar(test, etta, test);
+			SummVectors(s, test, s);
 		}
 
 #if DIAGONAL_FACTORIZATION
-		MultDiOnVect(inverseDi, r, z, blockSize);//zj+1*/
+		MultDiOnVect(di_1, r, z, blockSize);//zj+1*/
 #else
 		SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, r, z, blockSize);
 		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_ggl, LLT_di, z, z, blockSize);

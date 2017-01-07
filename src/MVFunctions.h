@@ -1,26 +1,26 @@
 #include <vector>
 using namespace std;
 
-double RealScalarProduct            (vector < double > &vec1, vector < double > &vec2);
-void   ComplexScalarConjugateProduct(vector < double > &x, vector < double > &y, double  *result, int nb);
-void   RealMultiplyVectorScalar     (vector < double > &vec, double  scalar, vector < double > &result);
-void   ComplexMultiplyVectorScalar  (vector < double > &vec, double *scalar, vector < double > &result, int nb);
-void   MultiplyBlock                (double *x, double *y, double *a, int size);
+double RealScalarProduct            (const vector < double > &vec1, const vector < double > &vec2);
+void   ComplexScalarConjugateProduct(const vector < double > &x, const vector < double > &y, double  *result, const int blockSize);
+void   RealMultiplyVectorScalar     (const vector < double > &vec, const double  scalar, vector < double > &result);
+void   ComplexMultiplyVectorScalar  (const vector < double > &vec, const double *scalar, vector < double > &result, const int blockSize);
+void   MultiplyBlock(const double *x, double *dest, const double *a, const int size);
 
-void   MultiplyComplexNumbers(double *x, double *y, double *result);
-void   DivideComplexNumbers  (double *x, double *y, double *result);
-void   SubtractComplexNumbers(double *x, double *y, double *result);
-void   CopyVector            (double *x, double *y, int size);
+void   MultiplyComplexNumbers(const double *x, const double *y, double *result);
+void   DivideComplexNumbers  (const double *x, const double *y, double *result);
+void   SubtractComplexNumbers(const double *x, const double *y, double *result);
+void   CopyVector(const double *source, double *dest, const int size);
 
-void   SubtractVectors(vector < double > &x, vector < double > &y, vector < double > &result);
-void   SummVectors    (vector < double > &x, vector < double > &y, vector < double > &result);
+void   SubtractVectors(const vector < double > &x, const vector < double > &y, vector < double > &result);
+void   SummVectors    (const vector < double > &x, const vector < double > &y, vector < double > &result);
 
-void   DiagonalPreconditioning(double * x, double *result);
+void   DiagonalPreconditioning(const double * x, double *result);
 
-double Norm(vector < double > x, int nb);
+double Norm(const vector < double > x, const int blockSize);
 
-void   MultDiOnVect(vector < double > &di, vector < double > &vec, vector < double > &res, int blockSize);
-void   MultVMatrixOnVector(vector < vector < double > > &V, vector < double > vec, vector < double > &res, int blockSize, int m);
+void   MultDiOnVect(const vector < double > &di, const vector < double > &vec, vector < double > &result, const int blockSize);
+void   MultVMatrixOnVector(const vector < vector < double > > &V, const vector < double > vec, vector < double > &result, const int blockSize, int m);
 
 void   MultiplyRarefiedMatrixOnVector(
 	  const vector < int    > &ig

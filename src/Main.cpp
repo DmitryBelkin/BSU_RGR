@@ -114,10 +114,36 @@ void main()
 
 	InputSlae(di, ggl, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter, check);
 
+	printf("slaeDimension\t=\t%d\n", slaeDimension);
+	printf("maxiter\t=\t%d\n", maxiter);
+	printf("epsilon\t=\t%le\n", epsilon);
+	//epsilon = 1e-16;
 	FILE *fp;
 	fopen_s(&fp, pathToResidual1, "w"); fclose(fp);
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
 	result.resize(slaeDimension);
 	CocgComplex(ig, jg, ggl, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
+
+	// output
+	fopen_s(&fp, "../resources/output/true_soulution.txt", "w");
+	for (int i = 0, size = check.size(); i < size; ++i)
+	{
+		fprintf(fp, "%lf\n", check[i]);
+	}
+	fclose(fp);
+
+	fopen_s(&fp, "../resources/output/result_soulution.txt", "w");
+	for (int i = 0, size = result.size(); i < size; ++i)
+	{
+		fprintf(fp, "%lf\n", result[i]);
+	}
+	fclose(fp);
+
+	fopen_s(&fp, "../resources/output/diff_soulutions.txt", "w");
+	for (int i = 0, size = result.size(); i < size; ++i)
+	{
+		fprintf(fp, "%lf\n", check[i] - result[i]);
+	}
+	fclose(fp);
 }
