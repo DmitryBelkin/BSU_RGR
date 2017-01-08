@@ -8,7 +8,6 @@ void CocgComplex(
 	,       int    *& ijg
 	,       int    *& idi
 	,       double *& rightPart
-	, const int       slaeDimension
 	, const int       blockSize
 	,       double *& result
 	, const double    epsilon

@@ -24,7 +24,6 @@ void CocgComplex(
 	,       int    *& ijg
 	,       int    *& idi
 	,       double *& rightPart
-	, const int       slaeDimension // можно было не добавлять, т.к. = 2 * blockSize
 	, const int       blockSize
 	,       double *& result
 	, const double    epsilon
@@ -32,12 +31,12 @@ void CocgComplex(
 	)
 {
 #if DIAGONAL_FACTORIZATION
-	double * di_1;
+	double * di_1 = NULL;
 	di_1 = new double[2 * blockSize];
 	for (int i = 0; i < blockSize; ++i)
 	{
 		int size = idi[i + 1] - idi[i];
-		if (size == 2) // если комплексное число
+		if (size == 2)
 		{
 			DiagonalPreconditioning(&di[idi[i]], &di_1[2 * i]);
 		}
@@ -48,25 +47,25 @@ void CocgComplex(
 		}
 	}
 #else
-	double * LLT_gg;
-	double * LLT_di;
-	int    * LLT_ig;
-	int    * LLT_jg;
-	int    * LLT_ijg;
-	int    * LLT_idi;
+	double * LLT_gg  = NULL;
+	double * LLT_di  = NULL;
+	int    * LLT_ig  = NULL;
+	int    * LLT_jg  = NULL;
+	int    * LLT_ijg = NULL;
+	int    * LLT_idi = NULL;
 	LLT_Factorization(ig, jg, ijg, idi, gg, di, LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, blockSize);
 #endif
 
-	double * temp;
-	double * p;
-	double * z;
-	double * r;
-	double * Ap;
+	double * temp = NULL;
+	double * p    = NULL;
+	double * z    = NULL;
+	double * r    = NULL;
+	double * Ap   = NULL;
+	double * y    = NULL;
+	double * s    = NULL;
+	double * test = NULL;
 	double alfa[2], beta[2];
 	double complexNumber1[2], complexNumber2[2];
-	double * y;
-	double * s;
-	double * test;
 	p    = new double[2 * blockSize];
 	z    = new double[2 * blockSize];
 	r    = new double[2 * blockSize];
@@ -78,7 +77,7 @@ void CocgComplex(
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
 	s = new double[2 * blockSize];
 	y = new double[2 * blockSize];
-	SubtractArrays(rightPart, temp, r, slaeDimension);
+	SubtractArrays(rightPart, temp, r, 2 * blockSize);
 	const double normRightPart = Norm(rightPart, blockSize);
 	double residual = Norm(r, blockSize) / normRightPart;
 	double residualSecond = residual;
@@ -177,4 +176,24 @@ void CocgComplex(
 	fopen_s(&fp, timeMeasurements, "a");
 	fprintf(fp, "%.6lf\n", timeEnd - timeStart);
 	fclose(fp);
+
+	delete [] temp;
+	delete [] p;
+	delete [] z;
+	delete [] r;
+	delete [] Ap;
+	delete [] y;
+	delete [] s;
+	delete [] test;
+
+#if DIAGONAL_FACTORIZATION
+	delete [] di_1;
+#else
+	delete [] LLT_gg;
+	delete [] LLT_di;
+	delete [] LLT_ig;
+	delete [] LLT_jg;
+	delete [] LLT_ijg;
+	delete [] LLT_idi;
+#endif
 }

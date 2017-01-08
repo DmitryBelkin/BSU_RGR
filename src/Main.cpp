@@ -30,7 +30,6 @@ void InputSlae(
 
 	blockSize = slaeDimension / 2;
 
-	//ig.resize(blockSize + 1);
 	ig = new int[blockSize+1];
 	sprintf_s(filename, "%s/ig", pathToSlaeDir);
 	fopen_s(&fp, filename, "rb");
@@ -42,7 +41,6 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/idi", pathToSlaeDir);
-	//idi.resize(blockSize + 1);
 	idi = new int[blockSize+1];
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0; i < blockSize + 1; ++i)
@@ -53,7 +51,6 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/jg", pathToSlaeDir);
-	//jg.resize(ig[blockSize]);
 	jg = new int[ig[blockSize]];
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0; i < ig[blockSize]; ++i)
@@ -64,7 +61,6 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/ijg", pathToSlaeDir);
-	//ijg.resize(ig[blockSize]+1);
 	ijg = new int[ig[blockSize]+1];
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0; i < ig[blockSize]+1; ++i)
@@ -75,7 +71,6 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/gg", pathToSlaeDir);
-	//gg.resize(ijg[ig[blockSize]]);
 	gg = new double[ijg[ig[blockSize]]];
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0; i < ijg[ig[blockSize]]; ++i)
@@ -85,7 +80,6 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/di", pathToSlaeDir);
-	//di.resize(idi[blockSize]);
 	di = new double[idi[blockSize]];
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0; i < idi[blockSize]; ++i)
@@ -95,7 +89,6 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/pr", pathToSlaeDir);
-	//rightPart.resize(slaeDimension);
 	rightPart = new double[slaeDimension];
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0; i < slaeDimension; ++i)
@@ -105,7 +98,6 @@ void InputSlae(
 	fclose(fp);
 
 	sprintf_s(filename, "%s/y.txt", pathToSlaeDir);
-	//check.resize(slaeDimension);
 	check = new double[slaeDimension];
 	fopen_s(&fp, filename, "rb");
 	for (int i = 0; i < slaeDimension; ++i)
@@ -132,17 +124,15 @@ void main()
 	InputSlae(di, gg, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter, check);
 
 	printf("slaeDimension\t=\t%d\n", slaeDimension);
-	printf("maxiter\t=\t%d\n", maxiter);
-	printf("epsilon\t=\t%le\n", epsilon);
-
-	//epsilon = 1e-16;
+	printf("maxiter\t\t=\t%d\n", maxiter);
+	printf("epsilon\t\t=\t%le\n", epsilon);
 
 	FILE *fp;
 	fopen_s(&fp, pathToResidual1, "w"); fclose(fp);
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
 	result = new double[slaeDimension];
-	CocgComplex(ig, jg, gg, di, ijg, idi, rightPart, slaeDimension, blockSize, result, epsilon, maxiter);
+	CocgComplex(ig, jg, gg, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 
 	// output
 	fopen_s(&fp, "../resources/output/true_soulution.txt", "w");
@@ -165,4 +155,14 @@ void main()
 		fprintf(fp, "%lf\n", check[i] - result[i]);
 	}
 	fclose(fp);
+
+	delete [] di;
+	delete [] gg;
+	delete [] rightPart;
+	delete [] result;
+	delete [] check;
+	delete [] idi;
+	delete [] ig;
+	delete [] ijg;
+	delete [] jg;
 }
