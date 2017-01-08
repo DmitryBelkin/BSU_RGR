@@ -2,7 +2,7 @@
 #include "LLT.h"
 #include <omp.h>
 
-// ËÌ‡˜Â LLT
+// –∏–Ω–∞—á–µ LLT
 #define DIAGONAL_FACTORIZATION 0
 #define LLT_FACTORIZATION !DIAGONAL_FACTORIZATION
 
@@ -17,26 +17,27 @@ void OutputIterationsAndResidual(const double residual, const int iteration, con
 }
 
 void CocgComplex(
-	        vector < int    > &ig
-	,       vector < int    > &jg
-	,       vector < double > &gg
-	,       vector < double > &di
-	,       vector < int    > &ijg
-	,       vector < int    > &idi
-	,       vector < double > &rightPart
-	, const int                blockSize
-	,       vector < double > &result
-	, const double             epsilon
-	, const int                maxiter
+	        int    *& ig
+	,       int    *& jg
+	,       double *& gg
+	,       double *& di
+	,       int    *& ijg
+	,       int    *& idi
+	,       double *& rightPart
+	, const int       slaeDimension // –º–æ–∂–Ω–æ –±—ã–ª–æ –Ω–µ –¥–æ–±–∞–≤–ª—è—Ç—å, —Ç.–∫. = 2 * blockSize
+	, const int       blockSize
+	,       double *& result
+	, const double    epsilon
+	, const int       maxiter
 	)
 {
 #if DIAGONAL_FACTORIZATION
-	vector < double > di_1;
-	di_1.resize(2 * blockSize);
+	double * di_1;
+	di_1 = new double[2 * blockSize];
 	for (int i = 0; i < blockSize; ++i)
 	{
 		int size = idi[i + 1] - idi[i];
-		if (size == 2) // ÂÒÎË ÍÓÏÔÎÂÍÒÌÓÂ ˜ËÒÎÓ
+		if (size == 2) // –µ—Å–ª–∏ –∫–æ–º–ø–ª–µ–∫—Å–Ω–æ–µ —á–∏—Å–ª–æ
 		{
 			DiagonalPreconditioning(&di[idi[i]], &di_1[2 * i]);
 		}
@@ -47,29 +48,37 @@ void CocgComplex(
 		}
 	}
 #else
-	vector < double > LLT_gg, LLT_di;
-	vector < int    > LLT_ig, LLT_jg, LLT_ijg, LLT_idi;
+	double * LLT_gg;
+	double * LLT_di;
+	int    * LLT_ig;
+	int    * LLT_jg;
+	int    * LLT_ijg;
+	int    * LLT_idi;
 	LLT_Factorization(ig, jg, ijg, idi, gg, di, LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, blockSize);
 #endif
 
-	vector < double > temp;
-	vector < double > p, z, r;
-	vector < double > Ap;
+	double * temp;
+	double * p;
+	double * z;
+	double * r;
+	double * Ap;
 	double alfa[2], beta[2];
 	double complexNumber1[2], complexNumber2[2];
-	vector < double > y, s, test;
-	p   .resize(2 * blockSize);
-	z   .resize(2 * blockSize);
-	r   .resize(2 * blockSize);
-	Ap  .resize(2 * blockSize);
-	temp.resize(2 * blockSize);
-	test.resize(2 * blockSize);
+	double * y;
+	double * s;
+	double * test;
+	p    = new double[2 * blockSize];
+	z    = new double[2 * blockSize];
+	r    = new double[2 * blockSize];
+	Ap   = new double[2 * blockSize];
+	temp = new double[2 * blockSize];
+	test = new double[2 * blockSize];
 	for (int i = 0; i < 2 * blockSize; ++i) { result[i] = 0.0; }
 
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
-	s.resize(2 * blockSize);
-	y.resize(2 * blockSize);
-	SubtractVectors(rightPart, temp, r);
+	s = new double[2 * blockSize];
+	y = new double[2 * blockSize];
+	SubtractArrays(rightPart, temp, r, slaeDimension);
 	const double normRightPart = Norm(rightPart, blockSize);
 	double residual = Norm(r, blockSize) / normRightPart;
 	double residualSecond = residual;
@@ -83,12 +92,12 @@ void CocgComplex(
 	SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize);
 #endif
 
-	p = z;
-	s = r;
-	y = result;
+	CopyDoubleArray(z     , p, 2 * blockSize);
+	CopyDoubleArray(r     , s, 2 * blockSize);
+	CopyDoubleArray(result, y, 2 * blockSize);
 
 	double etta;
-	int    flag = 0;
+	int    flag      = 0;
 	int    iteration = 0;
 
 	const double timeStart = omp_get_wtime();
@@ -100,30 +109,30 @@ void CocgComplex(
 		ComplexScalarConjugateProduct(Ap, p, complexNumber2, blockSize);            // ( _(A * p_j), p_j )
 		DivideComplexNumbers(complexNumber1, complexNumber2, alfa);                 // alpha_j
 
-		ComplexMultiplyVectorScalar(p, alfa, temp, blockSize);                      // alpha_j * p_j
-		SummVectors(result, temp, result);                                          // x_j+1
+		ComplexMultiplyArrayScalar(p, alfa, temp, blockSize);                       // alpha_j * p_j
+		SummArrays(result, temp, result, 2 * blockSize);                            // x_j+1
 
-		ComplexMultiplyVectorScalar(Ap, alfa, temp, blockSize);                     // alpha_j * A * p_j
-		SubtractVectors(r, temp, r);                                                // r_j+1
+		ComplexMultiplyArrayScalar(Ap, alfa, temp, blockSize);                      // alpha_j * A * p_j
+		SubtractArrays(r, temp, r, 2 * blockSize);                                  // r_j+1
 
-		SubtractVectors(r, s, test);
-		etta = -RealScalarProduct(test, s) / RealScalarProduct(test, test);
+		SubtractArrays(r, s, test, 2 * blockSize);
+		etta = -RealScalarProduct(test, s, 2 * blockSize) / RealScalarProduct(test, test, 2 * blockSize);
 		if (etta > 1.0)
 		{
 			flag = 1;
-			y = result;
-			s = r;
+			CopyDoubleArray(result, y, 2 * blockSize);
+			CopyDoubleArray(r     , s, 2 * blockSize);
 		}
 		else if (etta > 0)
 		{
 			flag = 1;
-			SubtractVectors(result, s, test);
-			RealMultiplyVectorScalar(test, etta, test);
-			SummVectors(y, test, y);
+			SubtractArrays(result, s, test, 2 * blockSize);
+			RealMultiplyArrayScalar(test, etta, test, 2 * blockSize);
+			SummArrays(y, test, y, 2 * blockSize);
 
-			SubtractVectors(r, s, test);
-			RealMultiplyVectorScalar(test, etta, test);
-			SummVectors(s, test, s);
+			SubtractArrays(r, s, test, 2 * blockSize);
+			RealMultiplyArrayScalar(test, etta, test, 2 * blockSize);
+			SummArrays(s, test, s, 2 * blockSize);
 		}
 
 #if DIAGONAL_FACTORIZATION
@@ -136,8 +145,8 @@ void CocgComplex(
 		ComplexScalarConjugateProduct(r, z, complexNumber2, blockSize);
 		DivideComplexNumbers(complexNumber2, complexNumber1, beta);     // beta_j
 
-		ComplexMultiplyVectorScalar(p, beta, temp, blockSize);          // beta_j * p_j
-		SummVectors(z, temp, p);                                        // p_j+1
+		ComplexMultiplyArrayScalar(p, beta, temp, blockSize);          // beta_j * p_j
+		SummArrays(z, temp, p, 2 * blockSize);                         // p_j+1
 
 		residual        = Norm(r, blockSize);
 		residual       /= normRightPart;
@@ -151,10 +160,10 @@ void CocgComplex(
 
 	if (flag)
 	{
-		y = result;
+		CopyDoubleArray(result, y, 2 * blockSize);
 	}
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
-	SubtractVectors(temp, rightPart, temp);
+	SubtractArrays(temp, rightPart, temp, 2 * blockSize);
 	residual  = Norm(temp, blockSize);
 	residual /= normRightPart;
 	OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");

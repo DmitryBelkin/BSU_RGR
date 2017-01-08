@@ -2,35 +2,44 @@
 #include "MVFunctions.h"
 
 void ResizeL(
-	        vector < int    > &LLT_ig
-	,       vector < int    > &LLT_jg
-	,       vector < int    > &LLT_ijg
-	,       vector < int    > &LLT_idi
-	,       vector < double > &LLT_gg
-	,       vector < double > &LLT_di
-	,       vector < int    > &fullMatrix_jg
-	,       vector < int    > &fullMatrix_ig
-	, const int                blockSize
+	        int    *& LLT_ig
+	,       int    *& LLT_jg
+	,       int    *& LLT_ijg
+	,       int    *& LLT_idi
+	,       double *& LLT_gg
+	,       double *& LLT_di
+	,       int    *& jg
+	,       int    *& ig
+	, const int       blockSize
 	)
 {
-	LLT_ig = fullMatrix_ig;
-	LLT_jg = fullMatrix_jg;
+	LLT_ig = new int[blockSize + 1];
+	LLT_jg = new int[ig[blockSize]];
 
-	LLT_ijg.resize(LLT_ig.back() + 1);
+	CopyIntArray(ig, LLT_ig, blockSize + 1);
+	CopyIntArray(jg, LLT_jg, ig[blockSize]);
+	
+	LLT_ijg = new int[ ig[blockSize] + 1 ];
 	LLT_ijg[0] = 0;
 	//все блоки в разложении имеют размер 2
-	for (int i = 1, size = LLT_ijg.size(); i < size; ++i)
+	for (int i = 1; i < ig[blockSize] + 1; ++i)
 	{
 		LLT_ijg[i] = LLT_ijg[i - 1] + 2;
 	}
-	LLT_gg.resize(LLT_ijg[LLT_ig.back()]);
-	LLT_idi.resize(blockSize + 1);
+	LLT_gg  = new double[ LLT_ijg[ LLT_ig[blockSize] ] ];
+	LLT_idi = new int   [ blockSize + 1 ];
 	LLT_idi[0] = 0;
-	for (int i = 1, size = LLT_idi.size(); i < size; ++i)
+	for (int i = 1; i < blockSize + 1; ++i)
 	{
 		LLT_idi[i] = LLT_idi[i - 1] + 2;
 	}
-	LLT_di.resize(LLT_idi.back());
+
+	LLT_di = new double[ LLT_idi[blockSize] ];
+	for (int i = 0; i < LLT_idi[blockSize]; ++i)
+	{
+		LLT_di[i] = 0;
+	}
+	
 }
 
 void SqrtComplex(double *ab, double*xy)
@@ -40,19 +49,19 @@ void SqrtComplex(double *ab, double*xy)
 }
 
 void LLT_Factorization(
-	        vector < int    > &ig
-	,       vector < int    > &jg
-	,       vector < int    > &ijg
-	,       vector < int    > &idi
-	,       vector < double > &gg
-	,       vector < double > &di
-	,       vector < int    > &LLT_ig
-	,       vector < int    > &LLT_jg
-	,       vector < int    > &LLT_ijg
-	,       vector < int    > &LLT_idi
-	,       vector < double > &LLT_gg
-	,       vector < double > &LLT_di
-	, const int               blockSize
+	        int    *& ig
+	,       int    *& jg
+	,       int    *& ijg
+	,       int    *& idi
+	,       double *& gg
+	,       double *& di
+	,       int    *& LLT_ig
+	,       int    *& LLT_jg
+	,       int    *& LLT_ijg
+	,       int    *& LLT_idi
+	,       double *& LLT_gg
+	,       double *& LLT_di
+	, const int       blockSize
 	)
 {
 	ResizeL(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, jg, ig, blockSize);
@@ -82,7 +91,7 @@ void LLT_Factorization(
 				if (jg[i_cur] == jg[k])
 				{
 					size = LLT_ijg[j+1] - LLT_ijg[j];
-					MultiplyBlock(&LLT_gg[LLT_ijg[k]], sum, &LLT_gg[LLT_ijg[i_cur]],size);
+					MultiplyBlock(&LLT_gg[LLT_ijg[k]], sum, &LLT_gg[LLT_ijg[i_cur]], size);
 				}
 			}
 			//new elem 
@@ -128,18 +137,18 @@ void LLT_Factorization(
 }
 
 void SLAE_Forward_Complex(
-	        vector < int    > &LLT_ig
-	,       vector < int    > &LLT_jg
-	,       vector < int    > &LLT_ijg
-	,       vector < int    > &LLT_idi
-	,       vector < double > &LLT_gg
-	,       vector < double > &LLT_di
-	,       vector < double > &rightPart
-	,       vector < double > &result
-	, const int                blockSize
+	        int    *& LLT_ig
+	,       int    *& LLT_jg
+	,       int    *& LLT_ijg
+	,       int    *& LLT_idi
+	,       double *& LLT_gg
+	,       double *& LLT_di
+	,       double *& rightPart
+	,       double *& result
+	, const int       blockSize
 	)
 {
-	result = rightPart;
+	CopyDoubleArray(rightPart, result, 2 * blockSize);
 	double tmp[2];
 	for (int i = 0; i < blockSize; ++i)
 	{
@@ -156,18 +165,18 @@ void SLAE_Forward_Complex(
 }
 
 void SLAE_Backward_Complex(
-	        vector < int    > &LLT_ig
-	,       vector < int    > &LLT_jg
-	,       vector < int    > &LLT_ijg
-	,       vector < int    > &LLT_idi
-	,       vector < double > &LLT_gg
-	,       vector < double > &LLT_di
-	,       vector < double > &rightPart
-	,       vector < double > &result
-	, const int                blockSize
+	        int    *& LLT_ig
+	,       int    *& LLT_jg
+	,       int    *& LLT_ijg
+	,       int    *& LLT_idi
+	,       double *& LLT_gg
+	,       double *& LLT_di
+	,       double *& rightPart
+	,       double *& result
+	, const int       blockSize
 	)
 {
-	result = rightPart;
+	CopyDoubleArray(rightPart, result, 2 * blockSize);
 	double tmp[2];
 	for (int j = blockSize - 1; j >= 0; j--)
 	{
