@@ -1,4 +1,5 @@
 #include "MVFunctions.h"
+#include <math.h>
 
 double RealScalarProduct(double *& vec1, double *& vec2, const int size)
 {

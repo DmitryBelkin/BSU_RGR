@@ -1,7 +1,8 @@
 #include "LLT.h"
 #include "MVFunctions.h"
+#include <math.h>
 
-void ResizeL(
+void SetLltArrays(
 	        int    *& LLT_ig
 	,       int    *& LLT_jg
 	,       int    *& LLT_ijg
@@ -21,7 +22,6 @@ void ResizeL(
 	
 	LLT_ijg = new int[ ig[blockSize] + 1 ];
 	LLT_ijg[0] = 0;
-	//все блоки в разложении имеют размер 2
 	for (int i = 1; i < ig[blockSize] + 1; ++i)
 	{
 		LLT_ijg[i] = LLT_ijg[i - 1] + 2;
@@ -48,7 +48,7 @@ void SqrtComplex(double *ab, double*xy)
 	xy[1] = ab[1] / (2 * xy[0]);
 }
 
-void LLT_Factorization(
+void LltFactorization(
 	        int    *& ig
 	,       int    *& jg
 	,       int    *& ijg
@@ -64,15 +64,13 @@ void LLT_Factorization(
 	, const int       blockSize
 	)
 {
-	ResizeL(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, jg, ig, blockSize);
+	SetLltArrays(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, jg, ig, blockSize);
 	double sum[2];
 	int size;
 	for (int i = 0; i < blockSize; ++i)
 	{
 		int ib0 = ig[i];
 		int ib1 = ig[i + 1];
-		//идем по блокам для разложения
-		//gg
 		for (int m = ib0; m < ib1; ++m)
 		{
 			int j = jg[m];
@@ -81,7 +79,6 @@ void LLT_Factorization(
 			sum[0] = 0;
 			sum[1] = 0;
 			int i_cur = ib0;
-			//суммируем умножения блоков в строке-столбце
 			for (int k = jb0; k < jb1; ++k)
 			{
 				while (jg[i_cur] < jg[k])
@@ -94,8 +91,6 @@ void LLT_Factorization(
 					MultiplyBlock(&LLT_gg[LLT_ijg[k]], sum, &LLT_gg[LLT_ijg[i_cur]], size);
 				}
 			}
-			//new elem 
-			//SubtractComplexNumbers(&gg[ijg[m]], sum, sum);
 			size = ijg[m + 1] - ijg[m];
 			if (size == 1)
 			{
@@ -111,7 +106,7 @@ void LLT_Factorization(
 			LLT_gg[LLT_ijg[m]  ] = sum[0];
 			LLT_gg[LLT_ijg[m]+1] = sum[1];
 		}
-		//di
+
 		sum[0] = 0;
 		sum[1] = 0;
 		for (int k = ib0; k < ib1; ++k)
@@ -136,7 +131,7 @@ void LLT_Factorization(
 	}
 }
 
-void SLAE_Forward_Complex(
+void ForwardSlae(
 	        int    *& LLT_ig
 	,       int    *& LLT_jg
 	,       int    *& LLT_ijg
@@ -164,7 +159,7 @@ void SLAE_Forward_Complex(
 	}
 }
 
-void SLAE_Backward_Complex(
+void BackwardSlae(
 	        int    *& LLT_ig
 	,       int    *& LLT_jg
 	,       int    *& LLT_ijg

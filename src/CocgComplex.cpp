@@ -2,17 +2,16 @@
 #include "LLT.h"
 #include <omp.h>
 
-// иначе LLT
 #define DIAGONAL_FACTORIZATION 0
 #define LLT_FACTORIZATION !DIAGONAL_FACTORIZATION
 
 const char * timeMeasurements = "../resources/output/timeMeasurements.txt";
 
-void OutputIterationsAndResidual(const double residual, const int iteration, const char *filename)
+void OutputIterationsAndResidual(const double residual1, const int iteration, const char *filename)
 {
 	FILE *fp;
 	fopen_s(&fp, filename, "a");
-	fprintf(fp, "%d\t%.15le\n", iteration, residual);
+	fprintf(fp, "%d\t%.15le\n", iteration, residual1);
 	fclose(fp);
 }
 
@@ -53,7 +52,7 @@ void CocgComplex(
 	int    * LLT_jg  = NULL;
 	int    * LLT_ijg = NULL;
 	int    * LLT_idi = NULL;
-	LLT_Factorization(ig, jg, ijg, idi, gg, di, LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, blockSize);
+	LltFactorization(ig, jg, ijg, idi, gg, di, LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, blockSize);
 #endif
 
 	double * temp = NULL;
@@ -79,16 +78,16 @@ void CocgComplex(
 	y = new double[2 * blockSize];
 	SubtractArrays(rightPart, temp, r, 2 * blockSize);
 	const double normRightPart = Norm(rightPart, blockSize);
-	double residual = Norm(r, blockSize) / normRightPart;
-	double residualSecond = residual;
-	OutputIterationsAndResidual(residual      , 0, "../resources/output/residual1.txt");
-	OutputIterationsAndResidual(residualSecond, 0, "../resources/output/residual2.txt");
+	double residual1 = Norm(r, blockSize) / normRightPart;
+	double residual2 = residual1;
+	OutputIterationsAndResidual(residual1, 0, "../resources/output/residual1.txt");
+	OutputIterationsAndResidual(residual2, 0, "../resources/output/residual2.txt");
 
 #if DIAGONAL_FACTORIZATION
 	MultDiOnVect(di_1, r, z, blockSize);
 #else
-	SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, r, z, blockSize);
-	SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize);
+	ForwardSlae (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, r, z, blockSize);
+	BackwardSlae(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize);
 #endif
 
 	CopyDoubleArray(z     , p, 2 * blockSize);
@@ -101,7 +100,7 @@ void CocgComplex(
 
 	const double timeStart = omp_get_wtime();
 
-	while (residualSecond > epsilon && iteration < maxiter)
+	while (residual2 > epsilon && iteration < maxiter)
 	{
 		ComplexScalarConjugateProduct (r, z, complexNumber1, blockSize);            // ( _(r_j), z_j )
 		MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, p, Ap, blockSize); //     A * p_j
@@ -135,25 +134,25 @@ void CocgComplex(
 		}
 
 #if DIAGONAL_FACTORIZATION
-		MultDiOnVect(di_1, r, z, blockSize); // z_j+1
+		MultDiOnVect(di_1, r, z, blockSize);                                             // z_j+1
 #else
-		SLAE_Forward_Complex (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, r, z, blockSize);
-		SLAE_Backward_Complex(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize); // z_j+1
+		ForwardSlae (LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, r, z, blockSize);
+		BackwardSlae(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize); // z_j+1
 #endif
 
 		ComplexScalarConjugateProduct(r, z, complexNumber2, blockSize);
 		DivideComplexNumbers(complexNumber2, complexNumber1, beta);     // beta_j
 
-		ComplexMultiplyArrayScalar(p, beta, temp, blockSize);          // beta_j * p_j
-		SummArrays(z, temp, p, 2 * blockSize);                         // p_j+1
+		ComplexMultiplyArrayScalar(p, beta, temp, blockSize);           // beta_j * p_j
+		SummArrays(z, temp, p, 2 * blockSize);                          // p_j+1
 
-		residual        = Norm(r, blockSize);
-		residual       /= normRightPart;
-		residualSecond  = Norm(s, blockSize);
-		residualSecond /= normRightPart;
-		OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");
-		OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/output/residual2.txt");
-		printf("residual = %le\r", residual);
+		residual1  = Norm(r, blockSize);
+		residual1 /= normRightPart;
+		residual2  = Norm(s, blockSize);
+		residual2 /= normRightPart;
+		OutputIterationsAndResidual(residual1, iteration + 1, "../resources/output/residual1.txt");
+		OutputIterationsAndResidual(residual2, iteration + 1, "../resources/output/residual2.txt");
+		printf("residual\t=\t%le\r", residual1);
 		iteration++;
 	}
 
@@ -163,11 +162,11 @@ void CocgComplex(
 	}
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
 	SubtractArrays(temp, rightPart, temp, 2 * blockSize);
-	residual  = Norm(temp, blockSize);
-	residual /= normRightPart;
-	OutputIterationsAndResidual(residual      , iteration + 1, "../resources/output/residual1.txt");
-	OutputIterationsAndResidual(residualSecond, iteration + 1, "../resources/output/residual2.txt");
-	printf("end residual\t=\t%le\n", residual);
+	residual1  = Norm(temp, blockSize);
+	residual1 /= normRightPart;
+	OutputIterationsAndResidual(residual1, iteration + 1, "../resources/output/residual1.txt");
+	OutputIterationsAndResidual(residual2, iteration + 1, "../resources/output/residual2.txt");
+	printf("final residual\t=\t%le\n", residual1);
 	printf("iterations\t=\t%d\n", iteration);
 	const double timeEnd = omp_get_wtime();
 

@@ -1,6 +1,4 @@
 #include "CocgComplex.h"
-#include <iostream>
-using namespace std;
 
 const char * pathToResidual1 = "../resources/output/nev1.txt";
 const char * pathToResidual2 = "../resources/output/nev2.txt";
@@ -135,26 +133,26 @@ void main()
 	CocgComplex(ig, jg, gg, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 
 	// output
-	fopen_s(&fp, "../resources/output/true_soulution.txt", "w");
-	for (int i = 0; i < slaeDimension; ++i)
-	{
-		fprintf(fp, "%lf\n", check[i]);
-	}
-	fclose(fp);
+	//fopen_s(&fp, "../resources/output/true_soulution.txt", "w");
+	//for (int i = 0; i < slaeDimension; ++i)
+	//{
+	//	fprintf(fp, "%lf\n", check[i]);
+	//}
+	//fclose(fp);
 
-	fopen_s(&fp, "../resources/output/result_soulution.txt", "w");
-	for (int i = 0; i < slaeDimension; ++i)
-	{
-		fprintf(fp, "%lf\n", result[i]);
-	}
-	fclose(fp);
+	//fopen_s(&fp, "../resources/output/result_soulution.txt", "w");
+	//for (int i = 0; i < slaeDimension; ++i)
+	//{
+	//	fprintf(fp, "%lf\n", result[i]);
+	//}
+	//fclose(fp);
 
-	fopen_s(&fp, "../resources/output/diff_soulutions.txt", "w");
-	for (int i = 0; i < slaeDimension; ++i)
-	{
-		fprintf(fp, "%lf\n", check[i] - result[i]);
-	}
-	fclose(fp);
+	//fopen_s(&fp, "../resources/output/diff_soulutions.txt", "w");
+	//for (int i = 0; i < slaeDimension; ++i)
+	//{
+	//	fprintf(fp, "%lf\n", check[i] - result[i]);
+	//}
+	//fclose(fp);
 
 	delete [] di;
 	delete [] gg;

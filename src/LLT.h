@@ -1,7 +1,7 @@
-#include <vector>
-using namespace std;
+#pragma once
+#include <stdio.h>
 
-void LLT_Factorization(
+void LltFactorization(
 	        int    *& ig
 	,       int    *& jg
 	,       int    *& ijg
@@ -17,7 +17,7 @@ void LLT_Factorization(
 	, const int       blockSize
 	);
 
-void SLAE_Forward_Complex(
+void ForwardSlae(
 	        int    *& LLT_ig
 	,       int    *& LLT_jg
 	,       int    *& LLT_ijg
@@ -29,7 +29,7 @@ void SLAE_Forward_Complex(
 	, const int       blockSize
 	);
 
-void SLAE_Backward_Complex(
+void BackwardSlae(
 	        int    *& LLT_ig
 	,       int    *& LLT_jg
 	,       int    *& LLT_ijg
