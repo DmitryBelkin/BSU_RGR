@@ -1,5 +1,6 @@
 #include "CocgComplex.h"
 #include "LLT.h"
+#include <mkl.h>
 #include <omp.h>
 
 #define DIAGONAL_FACTORIZATION 0
@@ -29,6 +30,7 @@ void CocgComplex(
 	, const int       maxiter
 	)
 {
+	mkl_set_num_threads(2);
 #if DIAGONAL_FACTORIZATION
 	double * di_1 = NULL;
 	di_1 = new double[2 * blockSize];
@@ -90,9 +92,12 @@ void CocgComplex(
 	BackwardSlae(LLT_ig, LLT_jg, LLT_ijg, LLT_idi, LLT_gg, LLT_di, z, z, blockSize);
 #endif
 
-	CopyDoubleArray(z     , p, 2 * blockSize);
-	CopyDoubleArray(r     , s, 2 * blockSize);
-	CopyDoubleArray(result, y, 2 * blockSize);
+	//CopyDoubleArray(z     , p, 2 * blockSize);
+	//CopyDoubleArray(r     , s, 2 * blockSize);
+	//CopyDoubleArray(result, y, 2 * blockSize);
+	cblas_dcopy(2 * blockSize, z     , 1, p, 1);
+	cblas_dcopy(2 * blockSize, r     , 1, s, 1);
+	cblas_dcopy(2 * blockSize, result, 1, y, 1);
 
 	double etta;
 	int    flag      = 0;
@@ -114,22 +119,29 @@ void CocgComplex(
 		SubtractArrays(r, temp, r, 2 * blockSize);                                  // r_j+1
 
 		SubtractArrays(r, s, test, 2 * blockSize);
-		etta = -RealScalarProduct(test, s, 2 * blockSize) / RealScalarProduct(test, test, 2 * blockSize);
+		//etta = -RealScalarProduct(test, s, 2 * blockSize) / RealScalarProduct(test, test, 2 * blockSize);
+		etta = -cblas_ddot(2 * blockSize, test, 1, s, 1) / cblas_ddot(2 * blockSize, test, 1, test, 1);
 		if (etta > 1.0)
 		{
 			flag = 1;
-			CopyDoubleArray(result, y, 2 * blockSize);
-			CopyDoubleArray(r     , s, 2 * blockSize);
+			//CopyDoubleArray(result, y, 2 * blockSize);
+			//CopyDoubleArray(r     , s, 2 * blockSize);
+			cblas_dcopy(2 * blockSize, result, 1, y, 1);
+			cblas_dcopy(2 * blockSize, r     , 1, s, 1);
+
+
 		}
 		else if (etta > 0)
 		{
 			flag = 1;
 			SubtractArrays(result, s, test, 2 * blockSize);
-			RealMultiplyArrayScalar(test, etta, test, 2 * blockSize);
+			//RealMultiplyArrayScalar(test, etta, test, 2 * blockSize);
+			cblas_dscal (2 * blockSize, etta, test, 1);
 			SummArrays(y, test, y, 2 * blockSize);
 
 			SubtractArrays(r, s, test, 2 * blockSize);
-			RealMultiplyArrayScalar(test, etta, test, 2 * blockSize);
+			//RealMultiplyArrayScalar(test, etta, test, 2 * blockSize);
+			cblas_dscal (2 * blockSize, etta, test, 1);
 			SummArrays(s, test, s, 2 * blockSize);
 		}
 
@@ -158,7 +170,8 @@ void CocgComplex(
 
 	if (flag)
 	{
-		CopyDoubleArray(result, y, 2 * blockSize);
+		//CopyDoubleArray(result, y, 2 * blockSize);
+		cblas_dcopy(2 * blockSize, result, 1, y, 1);
 	}
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
 	SubtractArrays(temp, rightPart, temp, 2 * blockSize);

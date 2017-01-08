@@ -1,6 +1,7 @@
 #include "LLT.h"
 #include "MVFunctions.h"
 #include <math.h>
+#include <mkl.h>
 
 void SetLltArrays(
 	        int    *& LLT_ig
@@ -17,6 +18,8 @@ void SetLltArrays(
 	LLT_ig = new int[blockSize + 1];
 	LLT_jg = new int[ig[blockSize]];
 
+	//cblas_ccopy(blockSize + 1, ig, 1, LLT_ig, 1);
+	//cblas_ccopy(ig[blockSize], jg, 1, LLT_jg, 1);
 	CopyIntArray(ig, LLT_ig, blockSize + 1);
 	CopyIntArray(jg, LLT_jg, ig[blockSize]);
 	
@@ -143,7 +146,8 @@ void ForwardSlae(
 	, const int       blockSize
 	)
 {
-	CopyDoubleArray(rightPart, result, 2 * blockSize);
+	cblas_dcopy(2 * blockSize, rightPart, 1, result, 1);
+	//CopyDoubleArray(rightPart, result, 2 * blockSize);
 	double tmp[2];
 	for (int i = 0; i < blockSize; ++i)
 	{
@@ -171,7 +175,8 @@ void BackwardSlae(
 	, const int       blockSize
 	)
 {
-	CopyDoubleArray(rightPart, result, 2 * blockSize);
+	cblas_dcopy(2 * blockSize, rightPart, 1, result, 1);
+	//CopyDoubleArray(rightPart, result, 2 * blockSize);
 	double tmp[2];
 	for (int j = blockSize - 1; j >= 0; j--)
 	{
