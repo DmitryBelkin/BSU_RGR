@@ -2,7 +2,7 @@
 
 const char * pathToResidual1 = "../resources/output/nev1.txt";
 const char * pathToResidual2 = "../resources/output/nev2.txt";
-const char * pathToSlaeDir   = "../resources/input";
+const char * pathToSlaeDir   = "../resources/input/slae1";
 
 void InputSlae(
 	  double *& di
@@ -16,7 +16,6 @@ void InputSlae(
 	, int     & blockSize
 	, double  & epsilon
 	, int     & maxiter
-	, double *& check
 	)
 {
 	char filename[100];
@@ -94,15 +93,6 @@ void InputSlae(
 		fread(&rightPart[i], sizeof(double), 1, fp);
 	}
 	fclose(fp);
-
-	sprintf_s(filename, "%s/y.txt", pathToSlaeDir);
-	check = new double[slaeDimension];
-	fopen_s(&fp, filename, "rb");
-	for (int i = 0; i < slaeDimension; ++i)
-	{
-		fread(&check[i], sizeof(double), 1, fp);
-	}
-	fclose(fp);
 }
 
 void main()
@@ -111,7 +101,6 @@ void main()
 	double * gg        = NULL;
 	double * rightPart = NULL;
 	double * result    = NULL;
-	double * check     = NULL;
 	int    * idi       = NULL;
 	int    * ig        = NULL;
 	int    * ijg       = NULL;
@@ -119,46 +108,24 @@ void main()
 	int      maxiter = 0, slaeDimension = 0, blockSize = 0;
 	double   epsilon = 0;
 
-	InputSlae(di, gg, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter, check);
+	InputSlae(di, gg, ig, jg, idi, ijg, rightPart, slaeDimension, blockSize, epsilon, maxiter);
 
 	printf("slaeDimension\t=\t%d\n", slaeDimension);
-	printf("maxiter\t\t=\t%d\n", maxiter);
-	printf("epsilon\t\t=\t%le\n", epsilon);
+	printf("maxiter\t\t=\t%d\n"    , maxiter      );
+	printf("epsilon\t\t=\t%le\n"   , epsilon      );
 
 	FILE *fp;
 	fopen_s(&fp, pathToResidual1, "w"); fclose(fp);
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
 	result = new double[slaeDimension];
+
 	CocgComplex(ig, jg, gg, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
-
-	// output
-	//fopen_s(&fp, "../resources/output/true_soulution.txt", "w");
-	//for (int i = 0; i < slaeDimension; ++i)
-	//{
-	//	fprintf(fp, "%lf\n", check[i]);
-	//}
-	//fclose(fp);
-
-	//fopen_s(&fp, "../resources/output/result_soulution.txt", "w");
-	//for (int i = 0; i < slaeDimension; ++i)
-	//{
-	//	fprintf(fp, "%lf\n", result[i]);
-	//}
-	//fclose(fp);
-
-	//fopen_s(&fp, "../resources/output/diff_soulutions.txt", "w");
-	//for (int i = 0; i < slaeDimension; ++i)
-	//{
-	//	fprintf(fp, "%lf\n", check[i] - result[i]);
-	//}
-	//fclose(fp);
-
+	
 	delete [] di;
 	delete [] gg;
 	delete [] rightPart;
 	delete [] result;
-	delete [] check;
 	delete [] idi;
 	delete [] ig;
 	delete [] ijg;
