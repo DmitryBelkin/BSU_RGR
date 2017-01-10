@@ -1,4 +1,6 @@
 #include "CocgComplex.h"
+#include <mkl.h>
+#include <omp.h>
 
 const char * pathToResidual1 = "../resources/output/nev1.txt";
 const char * pathToResidual2 = "../resources/output/nev2.txt";
@@ -130,6 +132,8 @@ void main()
 	fopen_s(&fp, pathToResidual2, "w"); fclose(fp);
 
 	result = new double[slaeDimension];
+	mkl_set_num_threads(2);
+	omp_set_num_threads(2);
 	CocgComplex(ig, jg, gg, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 
 	// output

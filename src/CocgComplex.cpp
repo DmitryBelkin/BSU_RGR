@@ -1,9 +1,15 @@
 #include "CocgComplex.h"
 #include "LLT.h"
+//#define MKL_Complex16 complex
+//#define MKL_Complex16 std::complex<double>
 #include <mkl.h>
 #include <omp.h>
 
-#define DIAGONAL_FACTORIZATION 0
+#include <iostream>
+#include <complex>
+using namespace std;
+
+#define DIAGONAL_FACTORIZATION 1
 #define LLT_FACTORIZATION !DIAGONAL_FACTORIZATION
 
 const char * timeMeasurements = "../resources/output/timeMeasurements.txt";
@@ -30,7 +36,6 @@ void CocgComplex(
 	, const int       maxiter
 	)
 {
-	mkl_set_num_threads(2);
 #if DIAGONAL_FACTORIZATION
 	double * di_1 = NULL;
 	di_1 = new double[2 * blockSize];
@@ -75,7 +80,12 @@ void CocgComplex(
 	test = new double[2 * blockSize];
 	for (int i = 0; i < 2 * blockSize; ++i) { result[i] = 0.0; }
 
+	const char uplo = 'L';
+	const int  m    = 2 * blockSize;
+	complex<double> * gg1 = new complex<double> [5];
+	mkl_zcsrsymv(&uplo, &m, gg1, ig, jg, result, temp);
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
+
 	s = new double[2 * blockSize];
 	y = new double[2 * blockSize];
 	SubtractArrays(rightPart, temp, r, 2 * blockSize);
@@ -128,8 +138,6 @@ void CocgComplex(
 			//CopyDoubleArray(r     , s, 2 * blockSize);
 			cblas_dcopy(2 * blockSize, result, 1, y, 1);
 			cblas_dcopy(2 * blockSize, r     , 1, s, 1);
-
-
 		}
 		else if (etta > 0)
 		{
