@@ -1,4 +1,5 @@
 #include "CocgComplex.h"
+#include <omp.h>
 
 const char * pathToResidual1 = "../resources/output/nev1.txt";
 const char * pathToResidual2 = "../resources/output/nev2.txt";
@@ -120,6 +121,7 @@ void main()
 
 	result = new double[slaeDimension];
 
+	omp_set_num_threads(2);
 	CocgComplex(ig, jg, gg, di, ijg, idi, rightPart, blockSize, result, epsilon, maxiter);
 	
 	delete [] di;

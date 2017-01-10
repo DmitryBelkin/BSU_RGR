@@ -1,5 +1,6 @@
 #include "MVFunctions.h"
 #include <math.h>
+#include <omp.h>
 
 double RealScalarProduct(double *& vec1, double *& vec2, const int size)
 {
@@ -106,6 +107,7 @@ void CopyDoubleArray(double *& source, double *& dest, const int size)
 
 void CopyIntArray(int *& source, int *& dest, const int size)
 {
+	#pragma omp parallel for private(i) shared(source, dest)
 	for (int i = 0; i < size; ++i)
 	{
 		dest[i] = source[i];
@@ -123,6 +125,7 @@ void DiagonalPreconditioning(const double * x, double *result)
 double Norm(double * x, const int blockSize)
 {
 	double result = 0;
+	#pragma omp parallel for private(i) shared(result)
 	for (int i = 0; i < blockSize; ++i)
 	{
 		result += x[2 * i] * x[2 * i] + x[2 * i + 1] * x[2 * i + 1];
@@ -133,6 +136,7 @@ double Norm(double * x, const int blockSize)
 void MultDiOnVect(double *& di, double *& vec, double *& result, const int blockSize)
 {
 	double tmp[2];
+	#pragma omp parallel for private(i) shared(result, tmp)
 	for (int i = 0; i < blockSize; ++i)
 	{
 		tmp[0] = 0;
@@ -155,12 +159,15 @@ void MultiplyRarefiedMatrixOnVector(
 	, const int       blockSize
 	)
 {
+	#pragma omp parallel for private(i) shared(y)
 	for (int i = 0; i < blockSize * 2; ++i) { y[i] = 0; }
+	#pragma omp parallel for private(i) shared(di)
 	for (int i = 0; i < blockSize    ; ++i)
 	{
 		int size = idi[i + 1] - idi[i];
 		MultiplyBlock(&x[i * 2], &y[i * 2], &di[idi[i]], size);
 	}
+	#pragma omp parallel for private(i) shared(gg)
 	for (int i = 0; i < blockSize; ++i)
 	{
 		for (int j = ig[i]; j < ig[i + 1]; ++j)

@@ -35,6 +35,7 @@ void SetLltArrays(
 	}
 
 	LLT_di = new double[ LLT_idi[blockSize] ];
+	#pragma omp parallel for private(i) shared(LLT_di)
 	for (int i = 0; i < LLT_idi[blockSize]; ++i)
 	{
 		LLT_di[i] = 0;
@@ -109,6 +110,7 @@ void LltFactorization(
 
 		sum[0] = 0;
 		sum[1] = 0;
+		#pragma omp parallel for private(k) shared(LLT_gg)
 		for (int k = ib0; k < ib1; ++k)
 		{
 			size = LLT_ijg[k + 1] - LLT_ijg[k];
@@ -149,6 +151,7 @@ void ForwardSlae(
 	{
 		int ib0 = LLT_ig[i];
 		int ib1 = LLT_ig[i + 1];
+		#pragma omp parallel for private(m) shared(result)
 		for (int m = ib0; m < ib1; ++m)
 		{
 			int j = LLT_jg[m];
