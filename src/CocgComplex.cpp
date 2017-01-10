@@ -3,6 +3,10 @@
 #include <mkl.h>
 #include <omp.h>
 
+#include <iostream>
+#include <complex>
+using namespace std;
+
 #define DIAGONAL_FACTORIZATION 0
 #define LLT_FACTORIZATION !DIAGONAL_FACTORIZATION
 
@@ -30,7 +34,6 @@ void CocgComplex(
 	, const int       maxiter
 	)
 {
-	mkl_set_num_threads(2);
 #if DIAGONAL_FACTORIZATION
 	double * di_1 = NULL;
 	di_1 = new double[2 * blockSize];
@@ -75,7 +78,12 @@ void CocgComplex(
 	test = new double[2 * blockSize];
 	for (int i = 0; i < 2 * blockSize; ++i) { result[i] = 0.0; }
 
+	//const char uplo = 'L';
+	//const int  m    = 2 * blockSize;
+	//complex<double> * gg1 = new complex<double> [5];
+	//mkl_zcsrsymv(&uplo, &m, gg1, ig, jg, result, temp);
 	MultiplyRarefiedMatrixOnVector(ig, jg, gg, di, ijg, idi, result, temp, blockSize);
+
 	s = new double[2 * blockSize];
 	y = new double[2 * blockSize];
 	SubtractArrays(rightPart, temp, r, 2 * blockSize);
@@ -128,8 +136,6 @@ void CocgComplex(
 			//CopyDoubleArray(r     , s, 2 * blockSize);
 			cblas_dcopy(2 * blockSize, result, 1, y, 1);
 			cblas_dcopy(2 * blockSize, r     , 1, s, 1);
-
-
 		}
 		else if (etta > 0)
 		{
@@ -162,9 +168,9 @@ void CocgComplex(
 		residual1 /= normRightPart;
 		residual2  = Norm(s, blockSize);
 		residual2 /= normRightPart;
-		OutputIterationsAndResidual(residual1, iteration + 1, "../resources/output/residual1.txt");
-		OutputIterationsAndResidual(residual2, iteration + 1, "../resources/output/residual2.txt");
-		printf("residual\t=\t%le\r", residual1);
+		//OutputIterationsAndResidual(residual1, iteration + 1, "../resources/output/residual1.txt");
+		//OutputIterationsAndResidual(residual2, iteration + 1, "../resources/output/residual2.txt");
+		//printf("residual\t=\t%le\r", residual1);
 		iteration++;
 	}
 
@@ -177,10 +183,10 @@ void CocgComplex(
 	SubtractArrays(temp, rightPart, temp, 2 * blockSize);
 	residual1  = Norm(temp, blockSize);
 	residual1 /= normRightPart;
-	OutputIterationsAndResidual(residual1, iteration + 1, "../resources/output/residual1.txt");
-	OutputIterationsAndResidual(residual2, iteration + 1, "../resources/output/residual2.txt");
-	printf("final residual\t=\t%le\n", residual1);
-	printf("iterations\t=\t%d\n", iteration);
+	//OutputIterationsAndResidual(residual1, iteration + 1, "../resources/output/residual1.txt");
+	//OutputIterationsAndResidual(residual2, iteration + 1, "../resources/output/residual2.txt");
+	//printf("final residual\t=\t%le\n", residual1);
+	//printf("iterations\t=\t%d\n", iteration);
 	const double timeEnd = omp_get_wtime();
 
 	printf("time spent\t=\t%.6lf sec\n", timeEnd - timeStart);
